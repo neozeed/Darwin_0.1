@@ -1,0 +1,10 @@
+Project		: rsync
+Description	: rsync
+Distribution	: 1.6.8
+Source		: Andrew Tridgell and Paul Mackerras
+Location	: http://samba.anu.edu.au/cgi-bin/rsync
+Location	: ftp://samba.anu.edu.au/pub/rsync
+Owner		: wsanchez
+Releases	: Titan
+Dependancies	: 
+

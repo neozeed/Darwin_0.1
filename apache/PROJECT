@@ -1,0 +1,15 @@
+Project		: apache
+Description	: apache - HTTP server
+Distribution	: 1.3.0
+Source		: Apache Group
+Location	: http://www.apache.org/
+Owner		: wsanchez
+Releases	: 
+Dependancies	: 
+
+Outstanding bugs: 
+
+ - The function find_fqdn() in util.c is failing to compute the FDQN for
+   the local machine. This means if you don't specify a hostname in the
+   Configuration/Server (httpd.conf), apache tries to compute it, fails,
+   and exits unhappily.

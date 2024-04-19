@@ -1,0 +1,8 @@
+Project		: Makefiles
+Description	: Some Makefiles
+Source		: Apple/CoreOS
+Owner		: wsanchez
+Releases	: 
+Dependancies	: make
+
+These are some Makefiles which are included in some CoreOS projects.

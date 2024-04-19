@@ -1,0 +1,9 @@
+Project		: flex
+Description	: Flex - Fast Lexer
+Distribution	: 2.5.4a
+Source		: Free Software Foundation
+Location	: ftp://prep.ai.mit.edu/pub/gnu/flex-2.5.4.tar.gz
+Owner		: wsanchez
+Releases	: Grail
+
+There are no changes to the distribution required for Rhapsody.

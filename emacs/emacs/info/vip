@@ -1,0 +1,74 @@
+This is Info file ../info/vip, produced by Makeinfo version 1.68 from
+the input file vip.texi.
+
+Distribution
+************
+
+   Copyright (C) 1987 Masahiko Sato.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the same conditions as for modified
+versions.
+
+
+Indirect:
+vip-1: 729
+vip-2: 49805
+
+Tag Table:
+(Indirect)
+Node: Top729
+Node: Survey1715
+Node: Basic Concepts2200
+Node: Loading VIP3849
+Node: Modes in VIP4583
+Node: Emacs Mode7131
+Node: Vi Mode7485
+Node: Insert Mode7793
+Node: Differences from Vi8416
+Node: Undoing9410
+Node: Changing9765
+Node: Searching10383
+Node: z Command11096
+Node: Counts11429
+Node: Marking11932
+Node: Region Commands12432
+Node: New Commands13100
+Node: New Bindings15851
+Node: Window Commands18017
+Node: Buffer Commands18482
+Node: File Commands18962
+Node: Misc Commands19324
+Node: Vi Commands19735
+Node: Numeric Arguments20673
+Node: Important Keys21163
+Node: Buffers and Windows22907
+Node: Files25134
+Node: Viewing the Buffer28377
+Node: Mark Commands30278
+Node: Motion Commands31115
+Node: Searching and Replacing36640
+Node: Modifying Commands38911
+Node: Delete Commands40313
+Node: Yank Commands42014
+Node: Put Back Commands42894
+Node: Change Commands44343
+Node: Repeating and Undoing Modifications45360
+Node: Other Vi Commands46175
+Node: Commands in Insert Mode49805
+Node: Ex Commands51874
+Node: Ex Command Reference53047
+Node: Customization59511
+Node: Customizing Constants59928
+Node: Customizing Key Bindings61250
+
+End Tag Table

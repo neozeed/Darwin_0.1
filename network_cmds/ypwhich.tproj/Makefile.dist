@@ -1,0 +1,6 @@
+#	from: @(#)Makefile	5.8 (Berkeley) 7/28/90
+#	$Id: Makefile.dist,v 1.3 1998/04/13 07:44:49 lkeshish Exp $
+
+PROG=	ypwhich
+
+.include <bsd.prog.mk>

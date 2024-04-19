@@ -1,0 +1,10 @@
+Project		: doc_cmds
+Description	: Documentation Commands
+Distribution	: NetBSD Mon Oct  5 19:17:48 PDT 1998
+Source		: NetBSD Foundation, Inc.
+Location	: cvs.netbsd.org:/cvsroot
+Owner		: wsanchez
+Releases	: Titan
+Dependancies	: 
+
+Our glob.h doesn't define GLOB_NOMATCH, so uses of it are #if'ed out for RHAPSODY. Libraries update should fix that up.

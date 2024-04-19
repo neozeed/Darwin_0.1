@@ -1,0 +1,7 @@
+Project		: ntp
+Description	: NTP - Network Time Protocol
+Distribution	: 4.0.72j
+Source		: University of Delaware
+Location	: http://www.eecis.udel.edu/~ntp/
+Owner		: wsanchez
+Dependancies	: 

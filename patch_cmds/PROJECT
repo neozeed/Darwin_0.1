@@ -1,0 +1,9 @@
+Project		: patch
+Description	: Patch - Apply patch files (diffs) to files
+Distribution	: 2.5
+Source		: Free Software Foundation
+Location	: ftp://prep.ai.mit.edu/pub/gnu/patch-2.5.tar.gz
+Owner		: wsanchez
+Releases	: 
+Dependancies	: 
+

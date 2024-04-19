@@ -1,0 +1,10 @@
+# @(#) $Id: Makefile.dist,v 1.1.1.1 1997/10/13 18:49:06 wsanchez Exp $
+
+PROG=	rarpd
+SRCS=	rarpd.c
+
+CFLAGS+=-I${.CURDIR} -DTFTP_DIR=\"/tftpboot\"
+
+MAN8=	rarpd.0
+
+.include <bsd.prog.mk>

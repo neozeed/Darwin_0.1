@@ -1,0 +1,20 @@
+##
+# grep
+##
+
+Title		grep
+BuildDiskTitle	grep
+Version		2.1
+Description	This package contains grep, the GNU Global Regular Expression Print (g/re/p) command.
+
+DefaultLocation		/
+Relocatable		NO
+Diskname		grep #%d
+
+NeedsAuthorization	YES
+Application		NO
+LibrarySubdirectory	Standard
+InstallOnly 		YES
+DisableStop		NO
+LongFilenames		YES
+#DeleteWarning		Deleting this may be a bad thing because...

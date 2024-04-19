@@ -1,0 +1,20 @@
+##
+# RCS
+##
+
+Title		Revision Control System (source code)
+BuildDiskTitle	Revision Control System (source code)
+Version		5.7
+Description	This package contains rcs, the Revision Control System.
+
+DefaultLocation		/NextDeveloper/Source/GNU/rcs
+Relocatable		YES
+Diskname		RCS #%d
+
+NeedsAuthorization	YES
+Application		NO
+LibrarySubdirectory	Standard
+InstallOnly 		YES
+DisableStop		NO
+LongFilenames		YES
+#DeleteWarning		Deleting this may be a bad thing because...

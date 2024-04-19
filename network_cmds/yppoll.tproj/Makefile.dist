@@ -1,0 +1,7 @@
+#	from: @(#)Makefile	5.8 (Berkeley) 7/28/90
+#	$Id: Makefile.dist,v 1.4 1998/04/13 07:44:30 lkeshish Exp $
+
+PROG=	yppoll
+MAN8=	yppoll.0
+
+.include <bsd.prog.mk>

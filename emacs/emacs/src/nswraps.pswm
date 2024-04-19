@@ -1,0 +1,47 @@
+/* %% defineps nswrap_latinify(int no)
+%% no execuserobject
+%% dup begin Encoding end ISOLatin1Encoding ne
+%% { dup length dict begin
+%%  {1 index /FID ne {def} {pop pop} ifelse} forall
+%%  /Encoding ISOLatin1Encoding def
+%%  FontName dup length string cvs dup length 10 add string /FontName exch def
+%%  dup length exch FontName exch 0 exch putinterval FontName exch (-ISOLatin1)
+%%  putinterval FontName cvn /FontName exch def
+%%  FontName
+%%  currentdict
+%% end
+%% definefont no exch defineuserobject }
+%% { pop } ifelse
+%% endps */
+
+defineps nswrap_transtable(char *EncodingIn,*EncodingOut|float Array[256])
+/TrDict 256 dict def
+
+TrDict begin
+  255 -1 0  { dup EncodingOut exch get
+    exch def
+  } bind for
+end
+
+0 1 255 {
+  EncodingIn exch get dup
+  TrDict exch known  { TrDict exch get } { pop 0 } ifelse
+  Array
+} bind for
+endps
+
+defineps nswrap_moveline(float x,y,l)
+x y moveto l 0 rlineto
+endps
+
+defineps nswrap_moveshow(float x,y;char txt[n]; int n)
+x y moveto (txt) show
+endps
+
+defineps nswrap_rect(float x,y,w,h)
+0 setlinewidth x y moveto w 0 rlineto 0 h rlineto w neg 0 rlineto closepath
+endps
+
+defineps nswrap_rect_rev(float x,y,w,h)
+0 setlinewidth x y moveto 0 h rlineto w 0 rlineto 0 h neg rlineto closepath
+endps

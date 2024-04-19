@@ -1,0 +1,9 @@
+Project		: grep
+Description	: grep - Global Regular Expression Print
+Distribution	: 2.1
+Source		: Free Software Foundation
+Location	: ftp://prep.ai.mit.edu/pub/gnu/grep-2.1.tar.gz
+Owner		: wsanchez
+Releases	: 
+Dependancies	: 
+

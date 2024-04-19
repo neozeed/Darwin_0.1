@@ -1,0 +1,20 @@
+##
+# RCS
+##
+
+Title		Revision Control System
+BuildDiskTitle	Revision Control System
+Version		5.7
+Description	This package contains rcs, the Revision Control System.
+
+DefaultLocation		/
+Relocatable		NO
+Diskname		RCS #%d
+
+NeedsAuthorization	YES
+Application		NO
+LibrarySubdirectory	Standard
+InstallOnly 		YES
+DisableStop		NO
+LongFilenames		YES
+#DeleteWarning		Deleting this may be a bad thing because...

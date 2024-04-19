@@ -1,0 +1,1124 @@
+This is Info file ../info/emacs, produced by Makeinfo version 1.68 from
+the input file emacs.texi.
+
+
+File: emacs,  Node: Fortran Columns,  Next: Fortran Abbrev,  Prev: Fortran Autofill,  Up: Fortran
+
+Checking Columns in Fortran
+---------------------------
+
+`C-c C-r'
+     Display a "column ruler" momentarily above the current line
+     (`fortran-column-ruler').
+
+`C-c C-w'
+     Split the current window horizontally temporarily so that it is 72
+     columns wide.  This may help you avoid making lines longer than the
+     72-character limit that some Fortran compilers impose
+     (`fortran-window-create-momentarily').
+
+   The command `C-c C-r' (`fortran-column-ruler') shows a column ruler
+momentarily above the current line.  The comment ruler is two lines of
+text that show you the locations of columns with special significance in
+Fortran programs.  Square brackets show the limits of the columns for
+line numbers, and curly brackets show the limits of the columns for the
+statement body.  Column numbers appear above them.
+
+   Note that the column numbers count from zero, as always in GNU Emacs.
+As a result, the numbers may be one less than those you are familiar
+with; but the positions they indicate in the line are standard for
+Fortran.
+
+   The text used to display the column ruler depends on the value of
+the variable `indent-tabs-mode'.  If `indent-tabs-mode' is `nil', then
+the value of the variable `fortran-column-ruler-fixed' is used as the
+column ruler.  Otherwise, the variable `fortran-column-ruler-tab' is
+displayed.  By changing these variables, you can change the column
+ruler display.
+
+   For even more help, use `C-c C-w' (`fortran-window-create'), a
+command which splits the current window horizontally, making a window 72
+columns wide.  By editing in this window you can immediately see when
+you make a line too wide to be correct Fortran.
+
+
+File: emacs,  Node: Fortran Abbrev,  Prev: Fortran Columns,  Up: Fortran
+
+Fortran Keyword Abbrevs
+-----------------------
+
+   Fortran mode provides many built-in abbrevs for common keywords and
+declarations.  These are the same sort of abbrev that you can define
+yourself.  To use them, you must turn on Abbrev mode.  *Note Abbrevs::.
+
+   The built-in abbrevs are unusual in one way: they all start with a
+semicolon.  You cannot normally use semicolon in an abbrev, but Fortran
+mode makes this possible by changing the syntax of semicolon to "word
+constituent."
+
+   For example, one built-in Fortran abbrev is `;c' for `continue'.  If
+you insert `;c' and then insert a punctuation character such as a space
+or a newline, the `;c' expands automatically to `continue', provided
+Abbrev mode is enabled.
+
+   Type `;?' or `;C-h' to display a list of all the built-in Fortran
+abbrevs and what they stand for.
+
+
+File: emacs,  Node: Asm Mode,  Prev: Fortran,  Up: Programs
+
+Asm Mode
+========
+
+   Asm mode is a major mode for editing files of assembler code.  It
+defines these commands:
+
+`<TAB>'
+     `tab-to-tab-stop'.
+
+`C-j'
+     Insert a newline and then indent using `tab-to-tab-stop'.
+
+`:'
+     Insert a colon and then remove the indentation from before the
+     label preceding colon.  Then do `tab-to-tab-stop'.
+
+`;'
+     Insert or align a comment.
+
+   The variable `asm-comment-char' specifies which character starts
+comments in assembler syntax.
+
+
+File: emacs,  Node: Building,  Next: Abbrevs,  Prev: Programs,  Up: Top
+
+Compiling and Testing Programs
+******************************
+
+   The previous chapter discusses the Emacs commands that are useful for
+making changes in programs.  This chapter deals with commands that
+assist in the larger process of developing and maintaining programs.
+
+* Menu:
+
+* Compilation::         Compiling programs in languages other
+                          than Lisp (C, Pascal, etc.).
+* Compilation Mode::    The mode for visiting compiler errors.
+* Compilation Shell::   Customizing your shell properly
+                          for use in the compilation buffer.
+* Debuggers::	        Running symbolic debuggers for non-Lisp programs.
+* Executing Lisp::      Various modes for editing Lisp programs,
+                          with different facilities for running
+                          the Lisp programs.
+* Libraries: Lisp Libraries.      Creating Lisp programs to run in Emacs.
+* Interaction: Lisp Interaction.  Executing Lisp in an Emacs buffer.
+* Eval: Lisp Eval.      Executing a single Lisp expression in Emacs.
+* External Lisp::         Communicating through Emacs with a separate Lisp.
+
+
+File: emacs,  Node: Compilation,  Next: Compilation Mode,  Up: Building
+
+Running Compilations under Emacs
+================================
+
+   Emacs can run compilers for noninteractive languages such as C and
+Fortran as inferior processes, feeding the error log into an Emacs
+buffer.  It can also parse the error messages and show you the source
+lines where compilation errors occurred.
+
+`M-x compile'
+     Run a compiler asynchronously under Emacs, with error messages to
+     `*compilation*' buffer.
+
+`M-x grep'
+     Run `grep' asynchronously under Emacs, with matching lines listed
+     in the buffer named `*grep*'.
+
+`M-x grep-find'
+     Run `grep' via `find', with user-specified arguments, and collect
+     output in the buffer named `*grep*'.
+
+`M-x kill-compilation'
+`M-x kill-grep'
+     Kill the running compilation or `grep' subprocess.
+
+   To run `make' or another compilation command, do `M-x compile'.
+This command reads a shell command line using the minibuffer, and then
+executes the command in an inferior shell, putting output in the buffer
+named `*compilation*'.  The current buffer's default directory is used
+as the working directory for the execution of the command; normally,
+therefore, the compilation happens in this directory.
+
+   When the shell command line is read, the minibuffer appears
+containing a default command line, which is the command you used the
+last time you did `M-x compile'.  If you type just <RET>, the same
+command line is used again.  For the first `M-x compile', the default is
+`make -k'.  The default compilation command comes from the variable
+`compile-command'; if the appropriate compilation command for a file is
+something other than `make -k', it can be useful for the file to
+specify a local value for `compile-command' (*note File Variables::.).
+
+   Starting a compilation displays the buffer `*compilation*' in
+another window but does not select it.  The buffer's mode line tells you
+whether compilation is finished, with the word `run' or `exit' inside
+the parentheses.  You do not have to keep this buffer visible;
+compilation continues in any case.  While a compilation is going on, the
+string `Compiling' appears in the mode lines of all windows.  When this
+string disappears, the compilation is finished.
+
+   If you want to watch the compilation transcript as it appears, switch
+to the `*compilation*' buffer and move point to the end of the buffer.
+When point is at the end, new compilation output is inserted above
+point, which remains at the end.  If point is not at the end of the
+buffer, it remains fixed while more compilation output is added at the
+end of the buffer.
+
+   To kill the compilation process, do `M-x kill-compilation'.  When
+the compiler process terminates, the mode line of the `*compilation*'
+buffer changes to say `signal' instead of `run'.  Starting a new
+compilation also kills any running compilation, as only one can exist
+at any time.  However, `M-x compile' asks for confirmation before
+actually killing a compilation that is running.
+
+   Just as you can run a compiler, you can also run `grep' and then
+visit the lines on which matches were found.  To do this, type `M-x
+grep' with an argument line that contains the same arguments you would
+give `grep' when running it normally: a `grep'-style regexp (usually in
+single-quotes to quote the shell's special characters) followed by file
+names which may use wildcards.  The output from `grep' goes in the
+`*grep*' buffer, and you can find the matching lines in the source with
+`C-x `' and <RET> just like compiler errors.
+
+   The command `M-x grep-find' is similar to `M-x grep', but it
+supplies a different initial default for the command--one that runs
+both `find' and `grep', so as to search every file in a directory tree.
+See also the `find-grep-dired' command, in *Note Dired and Find::.
+
+
+File: emacs,  Node: Compilation Mode,  Next: Compilation Shell,  Prev: Compilation,  Up: Building
+
+Compilation Mode
+================
+
+   The `*compilation*' buffer uses a special major mode, Compilation
+mode, whose main feature is to provide a convenient way to look at the
+source line where the error happened.
+
+`C-x `'
+     Visit the locus of the next compiler error message or `grep' match.
+
+`<RET>'
+     Visit the locus of the error message that point is on.  This
+     command is used in the compilation buffer.
+
+`Mouse-2'
+     Visit the locus of the error message that you click on.
+
+   You can visit the source for any particular error message by moving
+point in `*compilation*' to that error message and typing <RET>
+(`compile-goto-error').  Or click `Mouse-2' on the error message; you
+need not switch to the `*compilation*' buffer first.
+
+   To parse the compiler error messages sequentially, type `C-x `'
+(`next-error').  The character following the `C-x' is the backquote or
+"grave accent," not the single-quote.  This command is available in all
+buffers, not just in `*compilation*'; it displays the next error
+message at the top of one window and source location of the error in
+another window.
+
+   The first time `C-x `' is used after the start of a compilation, it
+moves to the first error's location.  Subsequent uses of `C-x `'
+advance down to subsequent errors.  If you visit a specific error
+message with <RET> or `Mouse-2', subsequent `C-x `' commands advance
+from there.  When `C-x `' gets to the end of the buffer and finds no
+more error messages to visit, it fails and signals an Emacs error.
+
+   `C-u C-x `' starts scanning from the beginning of the compilation
+buffer.  This is one way to process the same set of errors again.
+
+   Compilation mode also redefines the keys <SPC> and <DEL> to scroll
+by screenfuls, and `M-n' and `M-p' to move to the next or previous
+error message.  You can also use `M-{' and `M-}' to move up or down to
+an error message for a different source file.
+
+   The features of Compilation mode are also available in a minor mode
+called Compilation Minor mode.  This lets you parse error messages in
+any buffer, not just a normal compilation output buffer.  Type `M-x
+compilation-minor-mode' to enable the minor mode.  This defines the keys
+<RET> and `Mouse-2', as in the Compilation major mode.  In an Rlogin
+buffer (*note Remote Host::.), Compilation minor mode automatically
+accesses remote source files by FTP (*note File Names::.).
+
+
+File: emacs,  Node: Compilation Shell,  Next: Debuggers,  Prev: Compilation Mode,  Up: Building
+
+Subshells for Compilation
+=========================
+
+   Note: Emacs uses a shell to run the compilation command, but
+specifies the option for a noninteractive shell.  This means, in
+particular, that the shell should start with no prompt.  If you find
+your usual shell prompt making an unsightly appearance in the
+`*compilation*' buffer, it means you have made a mistake in your
+shell's init file by setting the prompt unconditionally.  (This init
+file's name may be `.profile', `.cshrc', `.shrc', or various other
+things, depending on the shell you use.)  The shell init file should
+set the prompt only if there already is a prompt.  In csh, here is how
+to do it:
+
+     if ($?prompt) set prompt = ...
+
+And here's how to do it in bash:
+
+     if [ "${PS1+set}" = set ]
+     then prompt=...
+     fi
+
+   There may well be other things that your shell's init file ought to
+do only for an interactive shell.  You can use the same method to
+conditionalize them.
+
+   The MS-DOS "operating system" does not support asynchronous
+subprocesses; to work around this lack, `M-x compile' runs the
+compilation command synchronously on MS-DOS.  As a consequence, you must
+wait until the command finishes before you can do anything else in
+Emacs.  *Note MS-DOS::.
+
+
+File: emacs,  Node: Debuggers,  Next: Executing Lisp,  Prev: Compilation Shell,  Up: Building
+
+Running Debuggers Under Emacs
+=============================
+
+   The GUD (Grand Unified Debugger) library provides an interface to
+various symbolic debuggers from within Emacs.  We recommend the debugger
+GDB, which is free software, but you can also run DBX, SDB or XDB if you
+have them.  GUD can also serve as an interface to the Perl's debugging
+mode.
+
+* Menu:
+
+* Starting GUD::	How to start a debugger subprocess.
+* Debugger Operation::	Connection between the debugger and source buffers.
+* Commands of GUD::	Key bindings for common commands.
+* GUD Customization::	Defining your own commands for GUD.
+
+
+File: emacs,  Node: Starting GUD,  Next: Debugger Operation,  Up: Debuggers
+
+Starting GUD
+------------
+
+   There are five commands for starting a debugger, each corresponding
+to a particular debugger program.
+
+`M-x gdb <RET> FILE <RET>'
+     Run GDB as a subprocess of Emacs.  This command creates a buffer
+     for input and output to GDB, and switches to it.  If a GDB buffer
+     already exists, it just switches to that buffer.
+
+`M-x dbx <RET> FILE <RET>'
+     Similar, but run DBX instead of GDB.
+
+`M-x xdb <RET> FILE <RET>'
+     Similar, but run XDB instead of GDB.  Use the variable
+     `gud-xdb-directories' to specify directories to search for source
+     files.
+
+`M-x sdb <RET> FILE <RET>'
+     Similar, but run SDB instead of GDB.
+
+     Some versions of SDB do not mention source file names in their
+     messages.  When you use them, you need to have a valid tags table
+     (*note Tags::.) in order for GUD to find functions in the source
+     code.  If you have not visited a tags table or the tags table
+     doesn't list one of the functions, you get a message saying `The
+     sdb support requires a valid tags table to work'.  If this
+     happens, generate a valid tags table in the working directory and
+     try again.
+
+`M-x perldb <RET> FILE <RET>'
+     Run the Perl interpreter in debug mode to debug FILE, a Perl
+     program.
+
+   Each of these commands takes one argument: a command line to invoke
+the debugger.  In the simplest case, specify just the name of the
+executable file you want to debug.  You may also use options that the
+debugger supports.  However, shell wildcards and variables are not
+allowed.  GUD assumes that the first argument not starting with a `-'
+is the executable file name.
+
+   Emacs can only run one debugger process at a time.
+
+
+File: emacs,  Node: Debugger Operation,  Next: Commands of GUD,  Prev: Starting GUD,  Up: Debuggers
+
+Debugger Operation
+------------------
+
+   When you run a debugger with GUD, the debugger uses an Emacs buffer
+for its ordinary input and output.  This is called the GUD buffer.  The
+debugger displays the source files of the program by visiting them in
+Emacs buffers.  An arrow (`=>') in one of these buffers indicates the
+current execution line.  Moving point in this buffer does not move the
+arrow.
+
+   You can start editing these source files at any time in the buffers
+that were made to display them.  The arrow is not part of the file's
+text; it appears only on the screen.  If you do modify a source file,
+keep in mind that inserting or deleting lines will throw off the arrow's
+positioning; GUD has no way of figuring out which line corresponded
+before your changes to the line number in a debugger message.  Also,
+you'll typically have to recompile and restart the program for your
+changes to be reflected in the debugger's tables.
+
+   If you wish, you can control your debugger process entirely through
+the debugger buffer, which uses a variant of Shell mode.  All the usual
+commands for your debugger are available, and you can use the Shell mode
+history commands to repeat them.  *Note Shell Mode::.
+
+
+File: emacs,  Node: Commands of GUD,  Next: GUD Customization,  Prev: Debugger Operation,  Up: Debuggers
+
+Commands of GUD
+---------------
+
+   The GUD interaction buffer uses a variant of Shell mode, so the
+commands of Shell mode are available (*note Shell Mode::.).  GUD mode
+also provides commands for setting and clearing breakpoints, for
+selecting stack frames, and for stepping through the program.  These
+commands are available both in the GUD buffer and globally, but with
+different key bindings.
+
+   The breakpoint commands are usually used in source file buffers,
+because that is the way to specify where to set or clear the breakpoint.
+Here's the global command to set a breakpoint:
+
+`C-x <SPC>'
+     Set a breakpoint on the source line that point is on.
+
+   Here are the other special commands provided by GUD.  The keys
+starting with `C-c' are available only in the GUD interaction buffer.
+The key bindings that start with `C-x C-a' are available in the GUD
+interaction buffer and also in source files.
+
+`C-c C-l'
+`C-x C-a C-l'
+     Display in another window the last line referred to in the GUD
+     buffer (that is, the line indicated in the last location message).
+     This runs the command `gud-refresh'.
+
+`C-c C-s'
+`C-x C-a C-s'
+     Execute a single line of code (`gud-step').  If the line contains
+     a function call, execution stops after entering the called
+     function.
+
+`C-c C-n'
+`C-x C-a C-n'
+     Execute a single line of code, stepping across entire function
+     calls at full speed (`gud-next').
+
+`C-c C-i'
+`C-x C-a C-i'
+     Execute a single machine instruction (`gud-stepi').
+
+`C-c C-r'
+`C-x C-a C-r'
+     Continue execution without specifying any stopping point.  The
+     program will run until it hits a breakpoint, terminates, or gets a
+     signal that the debugger is checking for (`gud-cont').
+
+`C-c C-d'
+`C-x C-a C-d'
+     Delete the breakpoint(s) on the current source line, if any
+     (`gud-remove').  If you use this command in the GUD interaction
+     buffer, it applies to the line where the program last stopped.
+
+`C-c C-t'
+`C-x C-a C-t'
+     Set a temporary breakpoint on the current source line, if any.  If
+     you use this command in the GUD interaction buffer, it applies to
+     the line where the program last stopped.
+
+   The above commands are common to all supported debuggers.  If you are
+using GDB or (some versions of) DBX, these additional commands are
+available:
+
+`C-c <'
+`C-x C-a <'
+     Select the next enclosing stack frame (`gud-up').  This is
+     equivalent to the `up' command.
+
+`C-c >'
+`C-x C-a >'
+     Select the next inner stack frame (`gud-down').  This is
+     equivalent to the `down' command.
+
+   If you are using GDB, these additional key bindings are available:
+
+`<TAB>'
+     With GDB, complete a symbol name (`gud-gdb-complete-command').
+     This key is available only in the GUD interaction buffer, and
+     requires GDB versions 4.13 and later.
+
+`C-c C-f'
+`C-x C-a C-f'
+     Run the program until the selected stack frame returns (or until it
+     stops for some other reason).
+
+   These commands interpret a numeric argument as a repeat count, when
+that makes sense.
+
+   Because <TAB> serves as a completion command, you can't use it to
+enter a tab as input to the program you are debugging with GDB.
+Instead, type `C-q <TAB>' to enter a tab.
+
+
+File: emacs,  Node: GUD Customization,  Prev: Commands of GUD,  Up: Debuggers
+
+GUD Customization
+-----------------
+
+   On startup, GUD runs one of the following hooks: `gdb-mode-hook', if
+you are using GDB; `dbx-mode-hook', if you are using DBX;
+`sdb-mode-hook', if you are using SDB; `xdb-mode-hook', if you are
+using XDB; `perldb-mode-hook', for Perl debugging mode.  You can use
+these hooks to define custom key bindings for the debugger interaction
+buffer.  *Note Hooks::.
+
+   Here is a convenient way to define a command that sends a particular
+command string to the debugger, and set up a key binding for it in the
+debugger interaction buffer:
+
+     (gud-def FUNCTION CMDSTRING BINDING DOCSTRING)
+
+   This defines a command named FUNCTION which sends CMDSTRING to the
+debugger process, and gives it the documentation string DOCSTRING.  You
+can use the command thus defined in any buffer.  If BINDING is
+non-`nil', `gud-def' also binds the command to `C-c BINDING' in the GUD
+buffer's mode and to `C-x C-a BINDING' generally.
+
+   The command string CMDSTRING may contain certain `%'-sequences that
+stand for data to be filled in at the time FUNCTION is called:
+
+`%f'
+     The name of the current source file.  If the current buffer is the
+     GUD buffer, then the "current source file" is the file that the
+     program stopped in.
+
+`%l'
+     The number of the current source line.  If the current buffer is
+     the GUD buffer, then the "current source line" is the line that
+     the program stopped in.
+
+`%e'
+     The text of the C lvalue or function-call expression at or
+     adjacent to point.
+
+`%a'
+     The text of the hexadecimal address at or adjacent to point.
+
+`%p'
+     The numeric argument of the called function, as a decimal number.
+     If the command is used without a numeric argument, `%p' stands for
+     the empty string.
+
+     If you don't use `%p' in the command string, the command you define
+     ignores any numeric argument.
+
+
+File: emacs,  Node: Executing Lisp,  Next: Lisp Libraries,  Prev: Debuggers,  Up: Building
+
+Executing Lisp Expressions
+==========================
+
+   Emacs has several different major modes for Lisp and Scheme.  They
+are the same in terms of editing commands, but differ in the commands
+for executing Lisp expressions.  Each mode has its own purpose.
+
+Emacs-Lisp mode
+     The mode for editing source files of programs to run in Emacs Lisp.
+     This mode defines `C-M-x' to evaluate the current defun.  *Note
+     Lisp Libraries::.
+
+Lisp Interaction mode
+     The mode for an interactive session with Emacs Lisp.  It defines
+     `C-j' to evaluate the sexp before point and insert its value in the
+     buffer.  *Note Lisp Interaction::.
+
+Lisp mode
+     The mode for editing source files of programs that run in Lisps
+     other than Emacs Lisp.  This mode defines `C-M-x' to send the
+     current defun to an inferior Lisp process.  *Note External Lisp::.
+
+Inferior Lisp mode
+     The mode for an interactive session with an inferior Lisp process.
+     This mode combines the special features of Lisp mode and Shell mode
+     (*note Shell Mode::.).
+
+Scheme mode
+     Like Lisp mode but for Scheme programs.
+
+Inferior Scheme mode
+     The mode for an interactive session with an inferior Scheme
+     process.
+
+   Most editing commands for working with Lisp programs are in fact
+available globally.  *Note Programs::.
+
+
+File: emacs,  Node: Lisp Libraries,  Next: Lisp Interaction,  Prev: Executing Lisp,  Up: Building
+
+Libraries of Lisp Code for Emacs
+================================
+
+   Lisp code for Emacs editing commands is stored in files whose names
+conventionally end in `.el'.  This ending tells Emacs to edit them in
+Emacs-Lisp mode (*note Executing Lisp::.).
+
+   To execute a file of Emacs Lisp code, use `M-x load-file'.  This
+command reads a file name using the minibuffer and then executes the
+contents of that file as Lisp code.  It is not necessary to visit the
+file first; in any case, this command reads the file as found on disk,
+not text in an Emacs buffer.
+
+   Once a file of Lisp code is installed in the Emacs Lisp library
+directories, users can load it using `M-x load-library'.  Programs can
+load it by calling `load-library', or with `load', a more primitive
+function that is similar but accepts some additional arguments.
+
+   `M-x load-library' differs from `M-x load-file' in that it searches
+a sequence of directories and tries three file names in each directory.
+Suppose your argument is LIB; the three names are `LIB.elc', `LIB.el',
+and lastly just `LIB'.  If `LIB.elc' exists, it is by convention the
+result of compiling `LIB.el'; it is better to load the compiled file,
+since it will load and run faster.
+
+   If `load-library' finds that `LIB.el' is newer than `LIB.elc' file,
+it prints a warning, because it's likely that somebody made changes to
+the `.el' file and forgot to recompile it.
+
+   Because the argument to `load-library' is usually not in itself a
+valid file name, file name completion is not available.  Indeed, when
+using this command, you usually do not know exactly what file name will
+be used.
+
+   The sequence of directories searched by `M-x load-library' is
+specified by the variable `load-path', a list of strings that are
+directory names.  The default value of the list contains the directory
+where the Lisp code for Emacs itself is stored.  If you have libraries
+of your own, put them in a single directory and add that directory to
+`load-path'.  `nil' in this list stands for the current default
+directory, but it is probably not a good idea to put `nil' in the list.
+If you find yourself wishing that `nil' were in the list, most likely
+what you really want to do is use `M-x load-file' this once.
+
+   Often you do not have to give any command to load a library, because
+the commands defined in the library are set up to "autoload" that
+library.  Trying to run any of those commands calls `load' to load the
+library; this replaces the autoload definitions with the real ones from
+the library.
+
+   Emacs Lisp code can be compiled into byte-code which loads faster,
+takes up less space when loaded, and executes faster.  *Note Byte
+Compilation: (elisp)Byte Compilation.  By convention, the compiled code
+for a library goes in a separate file whose name consists of the
+library source file with `c' appended.  Thus, the compiled code for
+`foo.el' goes in `foo.elc'.  That's why `load-library' searches for
+`.elc' files first.
+
+
+File: emacs,  Node: Lisp Eval,  Next: External Lisp,  Prev: Lisp Interaction,  Up: Building
+
+Evaluating Emacs-Lisp Expressions
+=================================
+
+   Lisp programs intended to be run in Emacs should be edited in
+Emacs-Lisp mode; this happens automatically for file names ending in
+`.el'.  By contrast, Lisp mode itself is used for editing Lisp programs
+intended for other Lisp systems.  To switch to Emacs-Lisp mode
+explicitly, use the command `M-x emacs-lisp-mode'.
+
+   For testing of Lisp programs to run in Emacs, it is often useful to
+evaluate part of the program as it is found in the Emacs buffer.  For
+example, after changing the text of a Lisp function definition,
+evaluating the definition installs the change for future calls to the
+function.  Evaluation of Lisp expressions is also useful in any kind of
+editing, for invoking noninteractive functions (functions that are not
+commands).
+
+`M-:'
+     Read a single Lisp expression in the minibuffer, evaluate it, and
+     print the value in the echo area (`eval-expression').
+
+`C-x C-e'
+     Evaluate the Lisp expression before point, and print the value in
+     the echo area (`eval-last-sexp').
+
+`C-M-x'
+     Evaluate the defun containing or after point, and print the value
+     in the echo area (`eval-defun').
+
+`M-x eval-region'
+     Evaluate all the Lisp expressions in the region.
+
+`M-x eval-current-buffer'
+     Evaluate all the Lisp expressions in the buffer.
+
+   `M-:' (`eval-expression') is the most basic command for evaluating a
+Lisp expression interactively.  It reads the expression using the
+minibuffer, so you can execute any expression on a buffer regardless of
+what the buffer contains.  When the expression is evaluated, the current
+buffer is once again the buffer that was current when `M-:' was typed.
+
+   In Emacs-Lisp mode, the key `C-M-x' is bound to the command
+`eval-defun', which parses the defun containing or following point as a
+Lisp expression and evaluates it.  The value is printed in the echo
+area.  This command is convenient for installing in the Lisp environment
+changes that you have just made in the text of a function definition.
+
+   `C-M-x' treats `defvar' expressions specially.  Normally, evaluating
+a `defvar' expression does nothing if the variable it defines already
+has a value.  But `C-M-x' unconditionally resets the variable to the
+initial value specified in the `defvar' expression.  This special
+feature is convenient for debugging Lisp programs.
+
+   The command `C-x C-e' (`eval-last-sexp') evaluates the Lisp
+expression preceding point in the buffer, and displays the value in the
+echo area.  It is available in all major modes, not just Emacs-Lisp
+mode.  It does not treat `defvar' specially.
+
+   If `C-M-x' or `C-x C-e' is given a numeric argument, it inserts the
+value into the current buffer at point, rather than displaying it in
+the echo area.  The argument's value does not matter.
+
+   The most general command for evaluating Lisp expressions from a
+buffer is `eval-region'.  `M-x eval-region' parses the text of the
+region as one or more Lisp expressions, evaluating them one by one.
+`M-x eval-current-buffer' is similar but evaluates the entire buffer.
+This is a reasonable way to install the contents of a file of Lisp code
+that you are just ready to test.  Later, as you find bugs and change
+individual functions, use `C-M-x' on each function that you change.
+This keeps the Lisp world in step with the source file.
+
+
+File: emacs,  Node: Lisp Interaction,  Next: Lisp Eval,  Prev: Lisp Libraries,  Up: Building
+
+Lisp Interaction Buffers
+========================
+
+   The buffer `*scratch*' which is selected when Emacs starts up is
+provided for evaluating Lisp expressions interactively inside Emacs.
+
+   The simplest way to use the `*scratch*' buffer is to insert Lisp
+expressions and type `C-j' after each expression.  This command reads
+the Lisp expression before point, evaluates it, and inserts the value
+in printed representation before point.  The result is a complete
+typescript of the expressions you have evaluated and their values.
+
+   The `*scratch*' buffer's major mode is Lisp Interaction mode, which
+is the same as Emacs-Lisp mode except for the binding of `C-j'.
+
+   The rationale for this feature is that Emacs must have a buffer when
+it starts up, but that buffer is not useful for editing files since a
+new buffer is made for every file that you visit.  The Lisp interpreter
+typescript is the most useful thing I can think of for the initial
+buffer to do.  Type `M-x lisp-interaction-mode' to put the current
+buffer in Lisp Interaction mode.
+
+   An alternative way of evaluating Emacs Lisp expressions interactively
+is to use Inferior Emacs-Lisp mode, which provides an interface rather
+like Shell mode (*note Shell Mode::.) for evaluating Emacs Lisp
+expressions.  Type `M-x ielm' to create an `*ielm*' buffer which uses
+this mode.
+
+
+File: emacs,  Node: External Lisp,  Prev: Lisp Eval,  Up: Building
+
+Running an External Lisp
+========================
+
+   Emacs has facilities for running programs in other Lisp systems.
+You can run a Lisp process as an inferior of Emacs, and pass
+expressions to it to be evaluated.  You can also pass changed function
+definitions directly from the Emacs buffers in which you edit the Lisp
+programs to the inferior Lisp process.
+
+   To run an inferior Lisp process, type `M-x run-lisp'.  This runs the
+program named `lisp', the same program you would run by typing `lisp'
+as a shell command, with both input and output going through an Emacs
+buffer named `*lisp*'.  That is to say, any "terminal output" from Lisp
+will go into the buffer, advancing point, and any "terminal input" for
+Lisp comes from text in the buffer.  (You can change the name of the
+Lisp executable file by setting the variable `inferior-lisp-program'.)
+
+   To give input to Lisp, go to the end of the buffer and type the
+input, terminated by <RET>.  The `*lisp*' buffer is in Inferior Lisp
+mode, which combines the special characteristics of Lisp mode with most
+of the features of Shell mode (*note Shell Mode::.).  The definition of
+<RET> to send a line to a subprocess is one of the features of Shell
+mode.
+
+   For the source files of programs to run in external Lisps, use Lisp
+mode.  This mode can be selected with `M-x lisp-mode', and is used
+automatically for files whose names end in `.l', `.lsp', or `.lisp', as
+most Lisp systems usually expect.
+
+   When you edit a function in a Lisp program you are running, the
+easiest way to send the changed definition to the inferior Lisp process
+is the key `C-M-x'.  In Lisp mode, this runs the function
+`lisp-eval-defun', which finds the defun around or following point and
+sends it as input to the Lisp process.  (Emacs can send input to any
+inferior process regardless of what buffer is current.)
+
+   Contrast the meanings of `C-M-x' in Lisp mode (for editing programs
+to be run in another Lisp system) and Emacs-Lisp mode (for editing Lisp
+programs to be run in Emacs): in both modes it has the effect of
+installing the function definition that point is in, but the way of
+doing so is different according to where the relevant Lisp environment
+is found.  *Note Executing Lisp::.
+
+
+File: emacs,  Node: Abbrevs,  Next: Picture,  Prev: Building,  Up: Top
+
+Abbrevs
+*******
+
+   A defined "abbrev" is a word which "expands", if you insert it, into
+some different text.  Abbrevs are defined by the user to expand in
+specific ways.  For example, you might define `foo' as an abbrev
+expanding to `find outer otter'.  Then you would be able to insert
+`find outer otter ' into the buffer by typing `f o o <SPC>'.
+
+   A second kind of abbreviation facility is called "dynamic abbrev
+expansion".  You use dynamic abbrev expansion with an explicit command
+to expand the letters in the buffer before point by looking for other
+words in the buffer that start with those letters.  *Note Dynamic
+Abbrevs::.
+
+* Menu:
+
+* Abbrev Concepts::   Fundamentals of defined abbrevs.
+* Defining Abbrevs::  Defining an abbrev, so it will expand when typed.
+* Expanding Abbrevs:: Controlling expansion: prefixes, canceling expansion.
+* Editing Abbrevs::   Viewing or editing the entire list of defined abbrevs.
+* Saving Abbrevs::    Saving the entire list of abbrevs for another session.
+* Dynamic Abbrevs::   Abbreviations for words already in the buffer.
+* Dabbrev Customization:: What is a word, for dynamic abbrevs.  Case handling.
+
+
+File: emacs,  Node: Abbrev Concepts,  Next: Defining Abbrevs,  Up: Abbrevs
+
+Abbrev Concepts
+===============
+
+   An "abbrev" is a word which has been defined to "expand" into a
+specified "expansion".  When you insert a word-separator character
+following the abbrev, that expands the abbrev--replacing the abbrev
+with its expansion.  For example, if `foo' is defined as an abbrev
+expanding to `find outer otter', then you can insert `find outer
+otter.'  into the buffer by typing `f o o .'.
+
+   Abbrevs expand only when Abbrev mode (a minor mode) is enabled.
+Disabling Abbrev mode does not cause abbrev definitions to be forgotten,
+but they do not expand until Abbrev mode is enabled again.  The command
+`M-x abbrev-mode' toggles Abbrev mode; with a numeric argument, it
+turns Abbrev mode on if the argument is positive, off otherwise.  *Note
+Minor Modes::.  `abbrev-mode' is also a variable; Abbrev mode is on
+when the variable is non-`nil'.  The variable `abbrev-mode'
+automatically becomes local to the current buffer when it is set.
+
+   Abbrev definitions can be "mode-specific"--active only in one major
+mode.  Abbrevs can also have "global" definitions that are active in
+all major modes.  The same abbrev can have a global definition and
+various mode-specific definitions for different major modes.  A
+mode-specific definition for the current major mode overrides a global
+definition.
+
+   Abbrevs can be defined interactively during the editing session.
+Lists of abbrev definitions can also be saved in files and reloaded in
+later sessions.  Some users keep extensive lists of abbrevs that they
+load in every session.
+
+
+File: emacs,  Node: Defining Abbrevs,  Next: Expanding Abbrevs,  Prev: Abbrev Concepts,  Up: Abbrevs
+
+Defining Abbrevs
+================
+
+`C-x a g'
+     Define an abbrev, using one or more words before point as its
+     expansion (`add-global-abbrev').
+
+`C-x a l'
+     Similar, but define an abbrev specific to the current major mode
+     (`add-mode-abbrev').
+
+`C-x a i g'
+     Define a word in the buffer as an abbrev
+     (`inverse-add-global-abbrev').
+
+`C-x a i l'
+     Define a word in the buffer as a mode-specific abbrev
+     (`inverse-add-mode-abbrev').
+
+`M-x kill-all-abbrevs'
+     This command discards all abbrev definitions currently in effect,
+     leaving a blank slate.
+
+   The usual way to define an abbrev is to enter the text you want the
+abbrev to expand to, position point after it, and type `C-x a g'
+(`add-global-abbrev').  This reads the abbrev itself using the
+minibuffer, and then defines it as an abbrev for one or more words
+before point.  Use a numeric argument to say how many words before
+point should be taken as the expansion.  For example, to define the
+abbrev `foo' as mentioned above, insert the text `find outer otter' and
+then type `C-u 3 C-x a g f o o <RET>'.
+
+   An argument of zero to `C-x a g' means to use the contents of the
+region as the expansion of the abbrev being defined.
+
+   The command `C-x a l' (`add-mode-abbrev') is similar, but defines a
+mode-specific abbrev.  Mode-specific abbrevs are active only in a
+particular major mode.  `C-x a l' defines an abbrev for the major mode
+in effect at the time `C-x a l' is typed.  The arguments work the same
+as for `C-x a g'.
+
+   If the text already in the buffer is the abbrev, rather than its
+expansion, use command `C-x a i g' (`inverse-add-global-abbrev')
+instead of `C-x a g', or use `C-x a i l' (`inverse-add-mode-abbrev')
+instead of `C-x a l'.  These commands are called "inverse" because they
+invert the meaning of the two text strings they use (one from the
+buffer and one read with the minibuffer).
+
+   To change the definition of an abbrev, just define a new definition.
+When the abbrev has a prior definition, the abbrev definition commands
+ask for confirmation for replacing it.
+
+   To remove an abbrev definition, give a negative argument to the
+abbrev definition command: `C-u - C-x a g' or `C-u - C-x a l'.  The
+former removes a global definition, while the latter removes a
+mode-specific definition.
+
+   `M-x kill-all-abbrevs' removes all the abbrev definitions there are,
+both global and local.
+
+
+File: emacs,  Node: Expanding Abbrevs,  Next: Editing Abbrevs,  Prev: Defining Abbrevs,  Up: Abbrevs
+
+Controlling Abbrev Expansion
+============================
+
+   An abbrev expands whenever it is present in the buffer just before
+point and you type a self-inserting whitespace or punctuation character
+(<SPC>, comma, etc.).  More precisely, any character that is not a word
+constituent expands an abbrev, and any word-constituent character can
+be part of an abbrev.  The most common way to use an abbrev is to
+insert it and then insert a punctuation character to expand it.
+
+   Abbrev expansion preserves case; thus, `foo' expands into `find
+outer otter'; `Foo' into `Find outer otter', and `FOO' into `FIND OUTER
+OTTER' or `Find Outer Otter' according to the variable
+`abbrev-all-caps' (a non-`nil' value chooses the first of the two
+expansions).
+
+   These commands are used to control abbrev expansion:
+
+`M-''
+     Separate a prefix from a following abbrev to be expanded
+     (`abbrev-prefix-mark').
+
+`C-x a e'
+     Expand the abbrev before point (`expand-abbrev').  This is
+     effective even when Abbrev mode is not enabled.
+
+`M-x expand-region-abbrevs'
+     Expand some or all abbrevs found in the region.
+
+   You may wish to expand an abbrev with a prefix attached; for example,
+if `cnst' expands into `construction', you might want to use it to
+enter `reconstruction'.  It does not work to type `recnst', because
+that is not necessarily a defined abbrev.  What you can do is use the
+command `M-'' (`abbrev-prefix-mark') in between the prefix `re' and the
+abbrev `cnst'.  First, insert `re'.  Then type `M-''; this inserts a
+hyphen in the buffer to indicate that it has done its work.  Then
+insert the abbrev `cnst'; the buffer now contains `re-cnst'.  Now
+insert a non-word character to expand the abbrev `cnst' into
+`construction'.  This expansion step also deletes the hyphen that
+indicated `M-'' had been used.  The result is the desired
+`reconstruction'.
+
+   If you actually want the text of the abbrev in the buffer, rather
+than its expansion, you can accomplish this by inserting the following
+punctuation with `C-q'.  Thus, `foo C-q ,' leaves `foo,' in the buffer.
+
+   If you expand an abbrev by mistake, you can undo the expansion and
+bring back the abbrev itself by typing `C-_' to undo (*note Undo::.).
+This also undoes the insertion of the non-word character that expanded
+the abbrev.  If the result you want is the terminating non-word
+character plus the unexpanded abbrev, you must reinsert the terminating
+character, quoting it with `C-q'.
+
+   `M-x expand-region-abbrevs' searches through the region for defined
+abbrevs, and for each one found offers to replace it with its expansion.
+This command is useful if you have typed in text using abbrevs but
+forgot to turn on Abbrev mode first.  It may also be useful together
+with a special set of abbrev definitions for making several global
+replacements at once.  This command is effective even if Abbrev mode is
+not enabled.
+
+   Expanding an abbrev runs the hook `pre-abbrev-expand-hook' (*note
+Hooks::.).
+
+
+File: emacs,  Node: Editing Abbrevs,  Next: Saving Abbrevs,  Prev: Expanding Abbrevs,  Up: Abbrevs
+
+Examining and Editing Abbrevs
+=============================
+
+`M-x list-abbrevs'
+     Display a list of all abbrev definitions.
+
+`M-x edit-abbrevs'
+     Edit a list of abbrevs; you can add, alter or remove definitions.
+
+   The output from `M-x list-abbrevs' looks like this:
+
+     (lisp-mode-abbrev-table)
+     "dk"	       0    "define-key"
+     (global-abbrev-table)
+     "dfn"	       0    "definition"
+
+(Some blank lines of no semantic significance, and some other abbrev
+tables, have been omitted.)
+
+   A line containing a name in parentheses is the header for abbrevs in
+a particular abbrev table; `global-abbrev-table' contains all the global
+abbrevs, and the other abbrev tables that are named after major modes
+contain the mode-specific abbrevs.
+
+   Within each abbrev table, each nonblank line defines one abbrev.  The
+word at the beginning of the line is the abbrev.  The number that
+follows is the number of times the abbrev has been expanded.  Emacs
+keeps track of this to help you see which abbrevs you actually use, so
+that you can eliminate those that you don't use often.  The string at
+the end of the line is the expansion.
+
+   `M-x edit-abbrevs' allows you to add, change or kill abbrev
+definitions by editing a list of them in an Emacs buffer.  The list has
+the same format described above.  The buffer of abbrevs is called
+`*Abbrevs*', and is in Edit-Abbrevs mode.  Type `C-c C-c' in this
+buffer to install the abbrev definitions as specified in the
+buffer--and delete any abbrev definitions not listed.
+
+   The command `edit-abbrevs' is actually the same as `list-abbrevs'
+except that it selects the buffer `*Abbrevs*' whereas `list-abbrevs'
+merely displays it in another window.
+
+
+File: emacs,  Node: Saving Abbrevs,  Next: Dynamic Abbrevs,  Prev: Editing Abbrevs,  Up: Abbrevs
+
+Saving Abbrevs
+==============
+
+   These commands allow you to keep abbrev definitions between editing
+sessions.
+
+`M-x write-abbrev-file <RET> FILE <RET>'
+     Write a file FILE describing all defined abbrevs.
+
+`M-x read-abbrev-file <RET> FILE <RET>'
+     Read the file FILE and define abbrevs as specified therein.
+
+`M-x quietly-read-abbrev-file <RET> FILE <RET>'
+     Similar but do not display a message about what is going on.
+
+`M-x define-abbrevs'
+     Define abbrevs from definitions in current buffer.
+
+`M-x insert-abbrevs'
+     Insert all abbrevs and their expansions into current buffer.
+
+   `M-x write-abbrev-file' reads a file name using the minibuffer and
+then writes a description of all current abbrev definitions into that
+file.  This is used to save abbrev definitions for use in a later
+session.  The text stored in the file is a series of Lisp expressions
+that, when executed, define the same abbrevs that you currently have.
+
+   `M-x read-abbrev-file' reads a file name using the minibuffer and
+then reads the file, defining abbrevs according to the contents of the
+file.  `M-x quietly-read-abbrev-file' is the same except that it does
+not display a message in the echo area saying that it is doing its
+work; it is actually useful primarily in the `.emacs' file.  If an
+empty argument is given to either of these functions, they use the file
+name specified in the variable `abbrev-file-name', which is by default
+`"~/.abbrev_defs"'.
+
+   Emacs will offer to save abbrevs automatically if you have changed
+any of them, whenever it offers to save all files (for `C-x s' or `C-x
+C-c').  This feature can be inhibited by setting the variable
+`save-abbrevs' to `nil'.
+
+   The commands `M-x insert-abbrevs' and `M-x define-abbrevs' are
+similar to the previous commands but work on text in an Emacs buffer.
+`M-x insert-abbrevs' inserts text into the current buffer before point,
+describing all current abbrev definitions; `M-x define-abbrevs' parses
+the entire current buffer and defines abbrevs accordingly.
+
+
+File: emacs,  Node: Dynamic Abbrevs,  Next: Dabbrev Customization,  Prev: Saving Abbrevs,  Up: Abbrevs
+
+Dynamic Abbrev Expansion
+========================
+
+   The abbrev facility described above operates automatically as you
+insert text, but all abbrevs must be defined explicitly.  By contrast,
+"dynamic abbrevs" allow the meanings of abbrevs to be determined
+automatically from the contents of the buffer, but dynamic abbrev
+expansion happens only when you request it explicitly.
+
+`M-/'
+     Expand the word in the buffer before point as a "dynamic abbrev",
+     by searching in the buffer for words starting with that
+     abbreviation (`dabbrev-expand').
+
+`C-M-/'
+     Complete the word before point as a dynamic abbrev
+     (`dabbrev-completion').
+
+   For example, if the buffer contains `does this follow ' and you type
+`f o M-/', the effect is to insert `follow' because that is the last
+word in the buffer that starts with `fo'.  A numeric argument to `M-/'
+says to take the second, third, etc. distinct expansion found looking
+backward from point.  Repeating `M-/' searches for an alternative
+expansion by looking farther back.  After scanning all the text before
+point, it searches the text after point.  The variable `dabbrev-limit',
+if non-`nil', specifies how far in the buffer to search for an
+expansion.
+
+   After scanning the current buffer, `M-/' normally searches other
+buffers, unless you have set `dabbrev-check-all-buffers' to `nil'.
+
+   A negative argument to `M-/', as in `C-u - M-/', says to search
+first for expansions after point, and second for expansions before
+point.  If you repeat the `M-/' to look for another expansion, do not
+specify an argument.  This tries all the expansions after point and
+then the expansions before point.
+
+   After you have expanded a dynamic abbrev, you can copy additional
+words that follow the expansion in its original context.  Simply type
+`<SPC> M-/' for each word you want to copy.  The spacing and
+punctuation between words is copied along with the words.
+
+   The command `C-M-/' (`dabbrev-completion') performs completion of a
+dynamic abbreviation.  Instead of trying the possible expansions one by
+one, it finds all of them, then inserts the text that they have in
+common.  If they have nothing in common, `C-M-/' displays a list of
+completions, from which you can select a choice in the usual manner.
+*Note Completion::.
+
+   Dynamic abbrev expansion is completely independent of Abbrev mode;
+the expansion of a word with `M-/' is completely independent of whether
+it has a definition as an ordinary abbrev.
+

@@ -1,0 +1,6 @@
+Project		: sendmail
+Description	: Sendmail Mail Server and Tranport Agent
+Distribution	: 8.9.1
+Source		: Sendmail
+Location	: www.sendmail.org
+Owner		: wsanchez

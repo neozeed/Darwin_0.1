@@ -1,0 +1,71 @@
+Emacs20ForOpenStep-6.0beta2
+
+This is a beta version of emacs which uses the OpenStep API for window management. This release is meant for development/testing purposes only, I (Scott Bender<sbender@harmony-ds.com) would not recomend using this version in NS mode for any serious work. When run in a terminal, it's as stable as the FSF release (20.2) it is based on.
+
+I have only tested this version PPC. 
+
+A complete build requires makeinfo from the GNU texinfo package. Prebuild binaries can be found at  ftp://ftp.harmony-ds.com/emacs-for-openstep/support. It also normaly requires perl to create the html documentation. I've been unable to get perl to compile, so I've temporarily disabled this. You'll also need patch, which you can get from your friendly neighborhood GNU mirror.
+
+To apply the patch, cd to the emacs-20.2-27 package directory (which can be found at ftp://ftp.apple.com/devworld/Rhapsody/Sources/emacs-20.2-27.tgz), and type 'patch -Np1 < the_patch_file_name'. Now run 'make'.
+
+Note that the 'system-type' variable which used to be set to 'next-mach' is now set to 'apple-rhapsody' or 'apple-openstep'.
+
+You can start emacs with the '-ns' parameter from a terminal window. To run emacs from the Workspace under Rhapsody you must create a dummy app wrapper: create a directory in /LocalApps or ~/Apps called emacs.app and create a symbolic link to the installed emacs binary: (cd /LocalApps; mkdir emacs.app;ln -s /usr/local/bin/emacs emacs.app/emacs)
+
+Known Problems:
+
+  * Sometimes Focus gets messed up
+  * Numeric Pad Keys (which include the arrow keys) do not work properly
+     I've written a hack that allows the arrow keys to work
+  * File panels don't work
+  * Popup menu's don't work under Rhapsody
+  * Scrollbars are screwed up when on the left side
+    You'll need to turn them off in your .emacs with (scroll-bar-mode nil),
+    or set them up to be on the right side: 
+     (setq default-frame-alist (quote ((vertical-scroll-bars . right))))
+  * Random crashes under Rhapsody and OpenStep
+     (The exception "<NSInternalInconsistencyException> Buffer empty and needy"
+      is raised, what does this mean?)
+  * Most OpenStep defaults don't work (use M-x customize)
+  * Menus sometimes get messed up  (extra Hide and Quit items)
+
+Changes from 6.0beta1
+  * Better handling of exceptions
+  * All fonts and sizes should work now
+  * PPC support
+
+Changes from 5.0beta2.1
+  * Now based on emacs20.2-21
+  * Services menu works
+  * Configures on PowerPC (still doesn't run: I need HELP)
+  * Many NS functions and variables renamed  (could break some startup files)
+  * Menu creation performance increased (still faster to just turn them off)
+  * "Unkown color" error message fixed
+  * Scroll bars work when on the right side
+  * Command keys work
+  * Menu shows up at start now
+  * Main window gets focus at startup from workspace
+
+Changes from 5.0beta2
+  * Dumping now works under OpenStep and Rhapsody (much faster startup now)
+  * Fixed problem causing -[NSFont name] error messages
+  * Fixed bug which caused background colors to show improperly
+  * Buffer and Window menus work
+  * Menus under Rhapsody conform to Rhapsody standard
+
+Changes from 5.0beta1.1
+  * Works under Rhapsody!
+  * Fixed problem with pswrap include (thanks to Steve Nygard for this one)
+  * Updated ns-version 
+  * Updated bug report menu command
+
+Changes from 5.0beta1
+  * The main menu now works (although it's very slow under OpenStep))
+  * Drag and drop works
+  * Bugs in Copy/Paste fixed
+  * Popup menus now work (OpenStep only)
+
+Please send any comments or modification to this source to emacs@harmony-ds.com for inclusion in future versions.
+
+Information and updates can be found at http://www.harmony-ds.com/emacs-for-rhapsody
+

@@ -1,0 +1,20 @@
+##
+# rsync
+##
+
+Title		rsync
+BuildDiskTitle	rsync
+Version		1.6.8
+Description	This package contains rsync, the remote filesystem syncronization tool.
+
+DefaultLocation		/
+Relocatable		NO
+Diskname		rsync #%d
+
+NeedsAuthorization	YES
+Application		NO
+LibrarySubdirectory	Standard
+InstallOnly 		YES
+DisableStop		NO
+LongFilenames		YES
+#DeleteWarning		Deleting this may be a bad thing because...

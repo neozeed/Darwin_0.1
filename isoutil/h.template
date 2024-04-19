@@ -1,0 +1,1 @@
+$$/* $FILENAME$ created by $USERNAME$ on $DATE$ */#import <Foundation/Foundation.h>@interface $FILENAMESANSEXTENSION$ : NSObject{}@end

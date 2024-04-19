@@ -1,0 +1,9 @@
+Project		: mail_cmds
+Description	: Mail Commands
+Distribution	: NetBSD Wed Oct  7 10:27:27 PDT 1998
+Source		: NetBSD Foundation, Inc.
+Location	: cvs.netbsd.org:/cvsroot
+Owner		: wsanchez
+Dependancies	: 
+
+mail.local is disabled in favor of the version in sendmail.

@@ -1,0 +1,10 @@
+#	$Id: Makefile.dist,v 1.1.1.1 1997/10/13 18:49:59 wsanchez Exp $
+
+PROG =	rpc.rwalld
+SRCS =	rwalld.c
+MAN8 =	rpc.rwalld.0
+
+DPADD=	${LIBRPCSVC}
+LDADD=	-lrpcsvc
+
+.include <bsd.prog.mk>

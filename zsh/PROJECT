@@ -1,0 +1,9 @@
+Project		: zsh
+Description	: zsh
+Distribution	: 3.1.5
+Source		: Zsh Development Group
+Location	: http://www.zsh.org/pub/zsh-3.1.5.tar.gz
+Owner		: wsanchez
+Dependancies	: 
+
+Dynamic module suport requires dlopen()-style linking support.  It would be cool to add dyld support.

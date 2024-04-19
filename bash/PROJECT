@@ -1,0 +1,8 @@
+Project		: Bash
+Description	: Bourne Again Shell
+Distribution	: 2.02.1
+Source		: Free Software Foundation
+Location	: ftp://prep.ai.mit.edu/pub/gnu/bash-2.02.1.tar.gz
+Owner		: wsanchez
+Dependancies	: 
+

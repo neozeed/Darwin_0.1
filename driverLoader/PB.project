@@ -1,0 +1,21 @@
+{
+    FILESTABLE = {
+        H_FILES = (kl_com.h); 
+        M_FILES = (); 
+        OTHER_LIBS = (Driver, kernload_static); 
+        OTHER_LINKED = (driverLoader.m, kl_com.m); 
+        OTHER_SOURCES = (Makefile, Makefile.postamble); 
+    }; 
+    BUILDTOOL = /bin/gnumake; 
+    GENERATEMAIN = YES; 
+    LANGUAGE = English; 
+    LOCALIZABLE_FILES = {}; 
+    MAKEFILEDIR = "$(MAKEFILEPATH)/pb_makefiles"; 
+    NEXTSTEP_DOCUMENTEXTENSIONS = (); 
+    NEXTSTEP_INSTALLDIR = /usr/sbin; 
+    PDO_UNIX_INSTALLDIR = /usr/sbin; 
+    PROJECTNAME = driverLoader; 
+    PROJECTTYPE = Tool; 
+    PROJECTVERSION = 2.6; 
+    WINDOWS_INSTALLDIR = /usr/sbin; 
+}

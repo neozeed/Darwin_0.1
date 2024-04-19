@@ -1,0 +1,1031 @@
+\input texinfo @c -*-texinfo-*-
+
+@setfilename ../info/ns-emacs.info
+@settitle Emacs for OpenStep/Rhapsody
+
+@iftex
+@finalout
+@end iftex
+
+@titlepage
+@sp 10
+@center @titlefont{Emacs for OpenStep/Rhapsody}
+@ignore
+@center (Version 6.0beta1, December 9, 1997)
+FIXME/cl
+@end ignore
+@center (Version - not updated, see ns-version)
+@sp 2
+@center Carl Edman
+@sp 1
+@center Christian Limpach
+@sp 2
+@center Scott Bender
+@sp 2
+@end titlepage
+
+@unnumbered Distribution
+@*
+Copyright @copyright{} 1994 Carl Edman.@*
+Copyright @copyright{} 1997 Christian Limpach.
+Copyright @copyright{} 1997 Scott Bender.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+@ignore
+Permission is granted to process this file through Tex and print the
+results, provided the printed document carries copying permission
+notice identical to this one except for the removal of this paragraph
+(this paragraph not being relevant to the printed manual).
+
+@end ignore
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the same conditions as for modified versions.
+
+@ignore
+@menu
+* Introduction::                
+* Events::                      
+* Defaults::                    
+* Tips and Tricks::             
+* Thanks::                      
+@end menu
+@end ignore
+
+@node Top, Introduction, (dir), (dir)
+@top Emacs for OpenStep/Rhapsody
+
+Emacs for OpenStep/Rhapsody is a version of GNU Emacs 20 which adds support
+for the OpenStep and Rhapsody window systems while leaving most of
+the core functions of Emacs unchanged.  As a resultis can do anything 
+which GNU Emacs can do and is fully
+compatible with all Emacs Lisp packages written for it.  It supports
+OpenStep and Rhapsody on the same level (and mostly in a very similar manner)
+ as X is supported.  In addition it has a number of OpenStepy
+features which do not have any X equivalent.  The design aim was to make
+it look as similar as possible to an X application to Emacs Lisp
+programs and to make it look like a normal OpenStep or Rhapsody application to
+users.
+
+Comments and bug reports relating to the window system interface are
+welcome.  To report a bug please use the @samp{Info/Report OpenStep/Rhapsody
+bug...}  menu item.  This sends messages to Scott Bender <emacs@@harmony-ds.com>.
+
+Problems and bugs which do not relate to the OpenStep/Rhapsody support 
+(i.e. which can be reproduced even in a dumb terminal or under X) are better
+ posted to gnu.emacs.help or mailed to <bug-gnu-emacs@@prep.ai.mit.edu> where
+general GNU emacs improvements are discussed.  To do this, use the
+@samp{Info/Report General Emacs bug...} menu item.  Any improvements
+made to it will quickly find their way into this version as well.
+
+There are also two mailing lists for Emacs for OpenStep/Rhapsody,
+<emacs-for-rhapsody-users@@harmony-ds.com> and
+<emacs-for-rhapsody-announce@@harmony-ds.com>.  The former is intended for
+general discussion and allows anybody to post.  The latter restricts
+posting and should contain only a handful of announcements of new
+releases every year.  Both of these lists are handled by the Majordomo
+listserver which means that you can subscribe and unsubscribe
+automatically.  For example, to subscribe to emacs-for-rhapsody-users you'd
+send a message with the content @samp{subscribe} to
+<emacs-for-rhapsody-users-request@@harmony-ds.com>.  For more details write
+to the same address with the content @samp{HELP}.
+
+@menu
+* Introduction::	What you need to know to use and program.
+* Events::              How NS window system events are handled.
+* Defaults::	        Customization for NS.
+* Tips and Tricks::     Collected hints from Emacs users
+* Thanks::              The people who helped create Emacs for OpenStep/Rhapsody
+@end menu
+
+@node Introduction, Events, Top, Top
+@section Introduction
+
+Despite the size and complexity of GNU Emacs, NS and the
+NS support code this manual can be kept mercifully short by saying
+that everything written in the Emacs and the Emacs Lisp manuals about
+GNU Emacs applies equally to this Emacs except as noted here.  
+
+@itemize @bullet
+@item
+The @code{window-system} variable can now have the value @code{ns} in
+addition to e.g. @code{x} or @code{nil}.  These are typical examples from
+@file{~/.emacs} files which need to run different customizations
+depending on whether a or which window system is running.
+
+If you just want to distinguish between cases in which there is a
+window system and in which there isn't, this construct is useful.
+@lisp
+(if window-system
+    ...       ;;; function to evaluate if any window system is running
+  ...)        ;;; function to evaluate only when running on a dumb terminal
+@end lisp
+
+For more detailed control, use this.
+@lisp
+(cond
+ ((eq window-system 'ns)         ;;; NS specific instructions
+  ...)        
+ ((eq window-system 'x)          ;;; X specific instructions
+  ...)
+ (t      ;;; Instructions for dumb terminal or other window systems
+  ...))
+@end lisp
+
+@item 
+All X specific functions have been renamed to begin with @code{x-} if
+they didn't already (which most did).  The equivalent NS functions
+have been created with the same name but the @code{ns-} prefix.
+Finally a function without any prefix was created which will call either
+the @code{ns-} or the @code{x-} function depending on which window
+system Emacs is running at the time.  For example, the original
+@code{frame-face-alist} function was renamed to
+@code{x-frame-face-alist}, @code{ns-frame-face-alist} was created to
+fulfill the same task under NS and the new @code{frame-face-alist}
+will call @code{x-frame-face-alist} when running Emacs under X and
+@code{ns-frame-face-alist} when running under NS.  As the general
+function will run under any window system its use is encouraged.
+
+@item
+A similar renaming was done on the handful of X specific variables.  The
+only difference is that there are no generic variables which will work
+in either window system.
+
+@item
+When Emacs is called by a name which ends in @file{-nw} it will always
+start in terminal mode.  For example, a user who needs a terminal only
+emacs would create a symbolic link from @file{emacs} to @file{emacs-nw}.
+When he launches @file{emacs-nw} from the command line, the window
+system will never be involved.
+@end itemize
+
+@node Events, Defaults, Introduction, Top
+@section Events
+
+Under Emacs the NS command key works as the @dfn{super} modifier key.
+In principle users can bind their command keys to whatever function they
+want, but to make the transition for NS users easier the default NS
+startup files bind the most commonly used NS command keys to work just
+like they do in most other NS applications.  This is the code which
+accomplishes that.  You can of course override all of this in your
+@file{~/.emacs} file.
+
+@lisp
+(define-key global-map [?\s-'] 'next-multiframe-window)
+(define-key global-map [?\s--] 'center-line)
+(define-key global-map [?\s-:] 'ispell)
+(define-key global-map [?\s-\;] 'ispell-next)
+(define-key global-map [?\s-?] 'info)
+(define-key global-map [?\s-^] 'kill-some-buffers)
+(define-key global-map [?\s-&] 'kill-this-buffer)
+(define-key global-map [?\s-C] 'ns-popup-color-panel)
+(define-key global-map [?\s-D] 'dired)
+(define-key global-map [?\s-E] 'edit-abbrevs)
+(define-key global-map [?\s-L] 'shell-command)
+(define-key global-map [?\s-M] 'manual-entry)
+(define-key global-map [?\s-S] 'write-file)
+(define-key global-map [?\s-a] 'mark-whole-buffer)
+(define-key global-map [?\s-c] 'kill-ring-save)
+(define-key global-map [?\s-d] 'isearch-repeat-backward)
+(define-key global-map [?\s-e] 'isearch-yank-kill)
+(define-key global-map [?\s-f] 'isearch-forward)
+(define-key global-map [?\s-g] 'isearch-repeat-forward)
+(define-key global-map [?\s-h] 'do-hide-emacs)
+(define-key global-map [?\s-j] 'exchange-point-and-mark)
+(define-key global-map [?\s-k] 'kill-this-buffer)
+(define-key global-map [?\s-l] 'goto-line)
+(define-key global-map [?\s-m] 'iconify-frame)
+(define-key global-map [?\s-n] 'new-frame)
+(define-key global-map [?\s-o] 'find-file-other-frame)
+(define-key global-map [?\s-p] 'print-buffer)
+(define-key global-map [?\s-q] 'save-buffers-kill-emacs)
+(define-key global-map [?\s-s] 'save-buffer)
+(define-key global-map [?\s-t] 'ns-popup-font-panel)
+(define-key global-map [?\s-u] 'revert-buffer)
+(define-key global-map [?\s-v] 'yank)
+(define-key global-map [?\s-w] 'delete-frame)
+(define-key global-map [?\s-x] 'kill-region)
+(define-key global-map [?\s-z] 'undo)
+(define-key global-map [?\s-|] 'shell-command-on-region)
+@end lisp
+
+NS applications receive a number of special events which have no X
+equivalent.  Under Emacs these events can be bound to functions just
+like ordinary keystrokes.  Here is a list of these events.
+
+@table @code
+@item ns-open-file
+This event occurs when another NS application requests that Emacs
+open a file.  A typical reason for this would be a user double-clicking
+a file in the Workspace File Viewer.  When this event is registered the
+name of the file to open is found in the variable @code{ns-input-file}.
+
+The behaviour of the default binding is controlled by the variable
+@code{ns-pop-up-frames}.  It's default value @code{'fresh} causes Emacs
+to open the new file in the selected frame if the selected buffer is a
+scratch buffer.  Otherwise Emacs opens a new frame and displays the file
+in that.
+
+To always get a new frame one would change @code{ns-pop-up-frames} to
+@code{t}.  To get the opposite behaviour (i.e. always putting the file into
+the selected frame), change @code{ns-pop-up-frames} to @code{nil}.
+
+@item ns-open-temp-file
+This event occurs when another application requests that Emacs open a
+temporary file.  The file name is again in @code{ns-input-file}.  By
+default this is handled by just generating a @code{ns-open-file} event
+(which then causes the @code{ns-open-file} function to be called
+whatever that may be).
+
+@lisp
+(define-key global-map [ns-open-temp-file] [ns-open-file])
+@end lisp
+
+@item ns-open-file-line
+Some applications (like e.g. ProjectBuilder or gdb) request not only a
+particular file, but also a particular line or sequence of lines in the
+file.  The file name is in @code{ns-input-file}, and
+@code{ns-input-line} is either the line or a cons cell the car of which
+contains the beginning line and the cdr of which the ending line.
+
+@lisp
+(define-key global-map [ns-open-file-line]
+            'ns-open-file-select-line)
+@end lisp
+
+@item ns-drag-file
+When a user drags files from another application into an Emacs frame
+this event is triggered.  Here @code{ns-input-file} is a list of all
+dragged files.  The default binding inserts all the dragged files into
+the current buffer.
+
+@lisp
+(define-key global-map [ns-drag-file] 'ns-insert-files)
+@end lisp
+
+@item ns-drag-color
+When a user drags a color from the color well (or some other source)
+Emacs sees this event and @code{ns-input-color} contains the name of the
+dragged color.  The default bindings alter the foreground color of the
+area the color was dragged onto (or background color if the color was
+shift dragged).
+
+@lisp
+(define-key global-map [ns-drag-color]
+            'ns-set-foreground-at-mouse)
+(define-key global-map [S-ns-drag-color]
+            'ns-set-background-at-mouse)
+@end lisp
+
+@item ns-change-font
+Emacs allows the user to open a standard NS font panel (by default that
+function is bound to @kbd{s-t}).  When the user selects a font in that
+panel this event occurs.  @code{ns-input-font} will contain the name of
+the selected font and @code{ns-input-fontsize} is its size.  The
+default binding causes Emacs to adjust the font of the selected frame.
+
+@lisp
+(define-key global-map [ns-change-font] 'ns-respond-to-changefont)
+@end lisp
+
+@item ns-power-off
+Finally when the user logs out and Emacs is still running it receives
+this event so that it has a chance to save its files before it dies.
+
+@lisp
+(define-key global-map [ns-power-off]
+  '(lambda () (interactive) (save-buffers-kill-emacs t)))
+@end lisp
+
+@end table
+
+In addition there are some NS keystrokes available on some NS/FIP
+machines which are not available under X.  Their names are
+self-explanatory.  They are @code{kp-at}, @code{kp-backslash},
+@code{kp-backtick}, @code{kp-bar}, @code{kp-cube}, @code{kp-hash},
+@code{kp-less}, @code{kp-more}, @code{kp-mu}, @code{kp-paragraph},
+@code{kp-ring}, @code{kp-square}, @code{kp-tilde}, @code{kp-yen} and
+@code{scroll-lock}.
+
+Emacs for NS also allows users to make use of NS services.  On the
+most basic level programmers can use the @code{ns-perform-service} to
+pass arbitrary strings to arbitrary services and receive the results
+back.  A more user friendly interface is offered by the
+@code{ns-define-service} macro.  Its argument is a list of strings which
+describes the menu path to the service in question (see example).  It
+returns a command which will send the region to the specified service
+and if the service returns a value, the region is replaced by the return
+value. Here are two usage examples:
+
+@lisp
+(define-key global-map [?\s-=] (ns-define-service '("Define in Webster")))
+(define-key global-map [?\s-H] (ns-define-service '("HeaderViewer" "Find")))
+@end lisp
+
+Under NS 3.2 and later such lines are in general not needed as Emacs
+will automatically define menu items for all the available services.
+
+@node Defaults, Tips and Tricks, Events, Top
+@section Defaults
+
+Under X resources are used to customize the behavior of Emacs to the
+needs of the user.  These resources are queried programmatically with
+the @code{x-get-resource} function.  Under NS defaults fulfill a similar
+function.  They can be read using the @code{ns-get-resource} function.
+The @code{get-resource} function will read either X resources or NS
+defaults depending on the window system which Emacs is running under and
+so is the best choice for portable programs.  In addition, it is also
+possible to set many of the following customizations by setting the
+@code{default-frame-alist} in the @file{~/.emacs} file.  Calling the
+function ns-save-preferences (for example through the @samp{Save
+Preferences} menu item) will automatically write out the defaults
+corresponding the selected window.
+
+This is a listing of some of the more useful defaults (and their default
+values).  Several of these defaults accept the names of colors as
+values.  For a list of all available colors look in @file{etc/Emacs.clr}
+and any other @file{.clr} file in the standard color search patch.
+Emacs also accepts color specifications of the form @samp{RGBrrggbbaa}
+where @var{rr}, @var{gg}, @var{bb} and @var{aa} are two hexadecimal
+digits describing the red, green, blue and alpha content of the color
+respectively.  @samp{HSBhhssbbaa}, @samp{CMYKccmmyykkaa} and
+@samp{GRAYggaa} are the equivalents in @samp{HSB}, @samp{CMYK} and gray
+scales.
+
+@table @samp
+@item InternalBorderWidth
+Width in pixels of the internal border of the NS frame.
+
+@example
+dwrite Emacs InternalBorderWidth 2.0
+@end example
+
+@item VerticalScrollBars
+@samp{YES} or @samp{NO} to enable or disable scroll bars.
+
+@example
+dwrite Emacs VerticalScrollBars YES
+@end example
+
+@item ScrollBarWidth
+Width in pixels of the scroll bars.
+
+@example
+dwrite Emacs ScrollBarWidth 10.0
+@end example
+
+@item Menus
+If this option is set, emacs will create and keep up to date a NS menu.
+
+@example
+dwrite Emacs Menus YES
+@end example
+
+@item AutoRaise
+@samp{YES} or @samp{NO} to indicate whether windows should be automatically raised
+when the mouse pointer enters them.
+
+@example
+dwrite Emacs AutoRaise NO
+@end example
+
+@item AutoLower
+@samp{YES} or @samp{NO} to indicate whether windows should be automatically lowered
+when the mouse pointer leaves them.
+
+@example
+dwrite Emacs AutoLower NO
+@end example
+
+@item fooFont
+Name of the font to be used for the Emacs face of name @var{foo}.  If
+@var{foo} is the empty string, the font for the entire frame is set
+(which can be overriden by various faces).  If this font is not set,
+Emacs for NS will use the system wide fixed pitch font set in
+Preferences.
+
+For most users the system fixed pitch font will be @samp{Ohlfs} which
+doesn't have any bold or italic versions.  As a consequence bold and
+italic characters will be indistinguishable from unmodified characters
+in Emacs.  If you wish to fix this use the following defaults which
+cause Emacs to use @samp{Courier} instead of @samp{Ohlfs} for italic and
+bold characters.
+
+@example
+dwrite Emacs ItalicFont Courier-Oblique
+dwrite Emacs BoldFont Courier-Bold
+dwrite Emacs Bold-ItalicFont Courier-BoldOblique
+@end example
+
+@item fooFontSize
+Size of the font to be used for the Emacs face of name @var{foo}.  If
+@var{foo} is the empty string the font size for the entire frame is set.
+If this font size is not set, Emacs for NS will use the size of the
+system wide fixed pitch font set in Preferences.  GNU Emacs doesn't
+currently handle fonts of differing sizes in one frame very well, so for
+most users it is probably advisable to only set @samp{FontSize} and let
+Emacs chose fonts of the same size for all faces.
+
+@item fooForeground
+Name of the color to be used to draw the Emacs face of name @var{foo}.
+If @var{foo} is the empty string the foreground color for the entire
+frame is set (which can be overriden by various faces).
+
+@example
+dwrite Emacs Foreground "Black"
+@end example
+
+@item fooBackground
+Name of the color to be used to draw the background for the Emacs face
+of name @var{foo}.  If @var{foo} is the empty string the background
+color for the entire frame is set (which can be overriden by various
+faces).
+
+@example
+dwrite Emacs Background "White"
+@end example
+
+@item fooStipple
+Name (including path) of the Image to be used to draw behind the Emacs
+face of name @var{foo}.  Example, the default is no stipple:
+
+@example
+dwrite Emacs BoldStipple "/NextApps/Grab.app/CameraNormal.tiff"
+@end example
+
+@item fooUnderline
+Whether to underline the Emacs face of name @var{foo}.  If @var{foo} is
+the empty string the default sets whether the entire screen is
+underlined (which can be overriden by various faces).
+
+@example
+dwrite Emacs Underline NO
+@end example
+
+@item Height
+Height in rows of the default window.
+
+@example
+dwrite Emacs Height 48
+@end example
+
+@item Width
+Width in columns of the default window.
+
+@example
+dwrite Emacs Width 80
+@end example
+
+@item CursorType
+Name of the default cursor type for Emacs.  Allowed values are
+@samp{bar}, @samp{box}, @samp{hollow}, @samp{line} and @samp{no}.
+
+@example
+dwrite Emacs CursorType box
+@end example
+
+@item CursorColor
+Name of the default cursor color for Emacs.  Of a particular use for this
+setting is the @samp{Highlight} "color".  When it is the cursor color,
+Emacs will draw the cursor using the standard NS highlighting operator.
+
+@example
+dwrite Emacs CursorColor Highlight
+@end example
+
+@item Top
+Distance in pixels from the top of the screen of the upper left corner
+of the default window.
+
+@example
+dwrite Emacs Top 100
+@end example
+
+@item Left
+Distance in pixels from the left edge of the screen to the upper left
+corner of the default window.
+
+@example
+dwrite Emacs Left 100
+@end example
+
+@item HideOnAutoLaunch
+@samp{YES} or @samp{NO} to determine whether Emacs will hide itself when
+autolaunched from the dock.
+
+@example
+dwrite Emacs HideOnAutoLaunch NO
+@end example
+
+@item ShrinkSpace
+For many postscript fonts default line spacing results in lines which
+are very far apart.  It is possible to reduce that line spacing and get
+more lines in the same vertical space.  Unfortunately by just how much
+the line spacing can be shrunk greatly depends on the font in use and
+shrinking the line spacing too much results in little specks of garbage
+being left all over the screen.  Setting this option to @samp{YES}
+shrinks line spacing by the maximum allowable amount for most commonly
+used fixed pitch fonts.  @samp{NO} instructs Emacs not to shrink the
+line spacing at all.  By setting this option to a floating point number
+a user can fine-tune the line spacing.  On the scale for that number,
+@samp{YES} corresponds to 0.75 and @samp{NO} corresponds to 1.0.
+
+@example
+dwrite Emacs ShrinkSpace YES
+@end example
+
+@item AlternateIsMeta
+If this option is set, the alternate key works as meta key.  This is
+generally the preferable behaviour for US and British users.  However
+some continental users may want to turn off this option so that they can
+enter special characters more easily. 
+
+@example
+dwrite Emacs AlternateIsMeta YES
+@end example
+
+On keyboards which have two alternate keys Emacs can also be configured
+to use only one as a meta key while leaving the other one alone.
+
+To use only the left alternate key as a meta key, use this dwrite.
+
+@example
+dwrite Emacs AlternateIsMeta LEFT
+@end example
+
+For the inverse, use this.
+
+@example
+dwrite Emacs AlternateIsMeta RIGHT
+@end example
+
+Only when this option is set to @samp{NO} NS dead key handling which
+allows easy entry of umlauts and accents is enabled.
+
+@item ISOLatin
+@samp{YES} or @samp{NO} to determine whether Emacs uses the ISO-8859-1
+extension to ASCII for input, output and file storage.  This encoding
+differs from the NS default encoding for non-ASCII characters, but
+coincides with that of X and some PC and Mac applications.
+
+@example
+dwrite Emacs ISOLatin NO
+@end example
+
+@item Buffered
+@samp{YES} or @samp{NO} depending on whether Emacs should use buffered
+or retained windows.  Which of the two gives the more pleasing display
+performance is a matter of taste.
+
+@example
+dwrite Emacs Buffered YES
+@end example
+
+@item UseOpenPanel
+If this option is set, Emacs will always use the standard NS open
+panel to ask for filenames.  Otherwise Emacs will use the usual Emacs
+method of reading a filename from the user.  Regardless of the setting
+of this option the NS file requester is always available using
+@code{ns-read-file-name}.  This option can also be turned on and off
+using the @code{ns-use-open-panel} Emacs Lisp variable.
+
+@example
+dwrite Emacs UseOpenPanel NO
+@end example
+
+@item CursorBlinkRate
+Users who want their cursor to blink can set the rate (in seconds) with
+this dwrite.  Setting it to @samp{NO} disables cursor blinking.
+
+@example
+dwrite Emacs CursorBlinkRate NO
+@end example
+
+@item fooFrame
+Position and size to use for the frame named @var{foo} when it is
+created.  The position and size have to be specified as a space
+separated list: @samp{top}, @samp{left}, @samp{height} and
+@samp{width}. @samp{top} and @samp{left} are expressed in pixels,
+@samp{height} is given in rows and @samp{width} is given in columns.
+Named frames can be created by e.g. @code{(make-frame '((name
+. "FOO")))}.
+
+@example
+dwrite Emacs TestFrame "100 200 30 70"
+@end example
+
+@item ReverseVideo
+@samp{YES} or @samp{NO} to indicate whether text should be displayed
+inverted.
+
+@example
+dwrite Emacs ReverseVideo NO
+@end example
+@end table
+
+Another default used by many Emacs users is this.
+
+@example
+dwrite Workspace DefaultOpenApp Emacs
+@end example
+
+It will cause the Workspace to open files without a registered extension
+in Emacs instead of as usual Edit.  For this default to work, Emacs
+needs to be in the application search path of the Workspace (which
+usually includes @file{~/Apps} and @file{/LocalApps}).
+
+@node Tips and Tricks, Thanks, Defaults, Top
+@section Tips and Tricks
+
+Emacs is an extremely customizable editor.  You can make it conform to
+virtually any conceivable user idiosyncrasy (and some which are not) by
+adding a few well-chosen lines of emacs lisp to your @file{~/.emacs}.
+Unfortunately even many experienced C developers are unfamiliar with
+Emacs Lisp.  For that reason many Emacs defaults have been chosen to
+make it behave as similar to Edit as possible.  But there are some
+customizations which a majority of users probably would hate as much as
+a minority would love them.  This section contains a cookbook of such
+customizations.  New contributions by Emacs users are very welcome.
+
+@menu
+* Grabbing environment variables::  
+* Miscellaneous useful variables::  
+* Backspace and delete::        
+* Color adjustments::           
+* Evaling in the minibuffer::   
+* Scrolling long completions::  
+* Highlighting matching parentheses::  
+* Resize the minibuffer automatically::  
+* Dealing with X specific packages::  
+* Rebinding the numeric keypad::  
+* Improving C mode::            
+* Custom menu items::           
+* Single line scrolling::       
+* Extended font customization::  
+@end menu
+
+@node Grabbing environment variables, Miscellaneous useful variables, Tips and Tricks, Tips and Tricks
+@subsection Grabbing environment variables
+
+Many programs which may run under Emacs like latex or man depend on the
+settings of environment variables.  If Emacs is launched from the shell,
+it will automatically inherit these environment variables and its
+subprocesses will inherit them from it.  But if Emacs is launched from
+the Workspace it is not a descendant of any shell, so its environment
+variables haven't been set which often causes the subprocesses it
+launches to behave differently than they would when launched from the
+shell.
+
+To solve this problem Emacs for NS contains @code{grabenv}.  This
+function will run a subshell and copy its environment variables into
+Emacs.
+
+Adding this line to your @file{~/.emacs} will grab the csh environment
+whenever emacs runs under a window system.
+
+@lisp
+(if window-system (grabenv))
+@end lisp
+
+If you have a different shell you will have to give @code{grabenv} some
+arguments.  For zsh you would do this.
+
+@lisp
+(if window-system (grabenv "/usr/bin/zsh"
+                           "source /etc/zshenv"
+                           "source ~/.zshenv"))
+@end lisp
+
+The reason that @code{grabenv} is not done by default is that it adds up
+to a second or two to the Emacs startup time.
+
+@node Miscellaneous useful variables, Backspace and delete, Grabbing environment variables, Tips and Tricks
+@subsection Miscellaneous useful variables
+
+This section describes a few variables you might want to set in your
+@file{~/.emacs} each of which doesn't warrant its own section.
+
+There is a conflict between the way the region behaved in emacs in the
+pre-GUI days and the way GUI users expect the selection to work.  By
+default that conflict is resolved by having the former adopt the
+behaviour of the latter which most people prefer.  However if you are a
+die-hard emacs user you may prefer things the other way around and add
+this line to your @file{~/.emacs}.  Experiment with both settings.
+
+@lisp
+(setq transient-mark-mode nil)
+@end lisp
+
+When you try to move beyond the end of a file Emacs will add newlines as
+needed.  With this line in your @file{~/.emacs} it will stop instead
+like most other editors do.
+
+@lisp
+(setq next-line-add-newlines nil)
+@end lisp
+
+By default when you kill a line with text on it, only the text is
+removed while the line itself remains.  You have to kill twice to really
+get rid of the whole line.  When this variable is set and you kill a
+line while at the beginning of the line it will go at once.
+
+@lisp
+(setq kill-whole-line t)
+@end lisp
+
+Annoyed by the Emacs startup message ?  Add this and you start with a
+tabula rasa.
+
+@lisp
+(setq inhibit-startup-message t)
+@end lisp
+
+@node Backspace and delete, Color adjustments, Miscellaneous useful variables, Tips and Tricks
+@subsection Backspace and delete
+
+In the computer world there has been no end of confusion about the
+meaning of backspace and delete.  Here is the convention used by Emacs
+for NS.  Hitting the oblong key at the upper right hand corner of your
+main keypad (usually labeled @samp{<--}) will generate a @code{delete}
+event.  Hitting this key while holding down a shift key generates a
+@code{backspace} event.  Both of these are distinct from hitting
+@key{C-h} (which invokes the Emacs help system).
+
+By default both @code{delete} and @code{backspace} will delete the
+character preceding the cursor.  To rebind @code{delete} to delete the
+character preceding the cursor and @code{backspace} to delete the
+character under the cursor, do this.
+
+@lisp
+(global-set-key [delete] 'backward-delete-char-untabify)
+(global-set-key [backspace] 'delete-char)
+@end lisp
+
+@node Color adjustments, Evaling in the minibuffer, Backspace and delete, Tips and Tricks
+@subsection Color adjustments
+
+A non-elisp hint: The easiest way to adjust your emacs color scheme is
+to bring up a color panel (with @key{s-C}) and drag the color you want
+over the emacs face you want to change.  Normal dragging will alter the
+foreground color.  Shift dragging will alter the background color.  To
+make the changes permanent select the "Save Preferences" item in the
+"Info" menu.  Useful in this context is the listing of all faces
+obtained by @key{M-x} list-faces-display.
+
+@node Evaling in the minibuffer, Scrolling long completions, Color adjustments, Tips and Tricks
+@subsection Evaling in the minibuffer
+
+Often you (at least if you are an elisp hacker) want to quickly evaluate
+an elisp expression.  To accomodate this desire Emacs provides the
+@code{eval-expression} command bound to @key{M-:}.  By default it is
+disabled to protect novice users from themselves.  These commands
+re-enable it and turn on an extremely powerful completion facility.
+
+@lisp
+(put 'eval-expression 'disabled nil)
+
+(define-key read-expression-map "\t" 'lisp-complete-symbol)
+@end lisp
+
+@node Scrolling long completions, Highlighting matching parentheses, Evaling in the minibuffer, Tips and Tricks
+@subsection Scrolling long completions
+
+Frequently completions will contain more lines than can be displayed in
+the completion window.  With this bit of code, hitting @key{TAB}
+repeatedly will scroll through all possible completions.
+
+@lisp
+(defun minibuf-tab ()
+  "Like `minibuffer-complete', but if you use this repeatedly it will scroll
+the window showing completions."
+  (interactive)
+  (or (eq last-command this-command) (setq minibuffer-scroll-window nil))
+  (if minibuffer-scroll-window
+      (save-excursion
+        (set-buffer (window-buffer minibuffer-scroll-window))
+        (if (pos-visible-in-window-p (point-max) minibuffer-scroll-window)
+            (set-window-start minibuffer-scroll-window (point-min))
+          (scroll-other-window)))
+    (minibuffer-complete)))
+
+(define-key minibuffer-local-must-match-map "\t" 'minibuf-tab)
+(define-key minibuffer-local-completion-map "\t" 'minibuf-tab)
+@end lisp
+
+This line will make completion nag you less if you select a valid
+response.
+
+@lisp
+(setq minibuffer-completion-confirm nil)
+@end lisp
+
+@node Highlighting matching parentheses, Resize the minibuffer automatically, Scrolling long completions, Tips and Tricks
+@subsection Highlighting matching parentheses
+
+I doubt that there is anybody who doesn't use this already, but just in
+case:
+
+@lisp
+(require 'paren)
+@end lisp
+
+Everybody who needs to match parentheses should have this in his
+@file{~/.emacs}.
+
+@node Resize the minibuffer automatically, Dealing with X specific packages, Highlighting matching parentheses, Tips and Tricks
+@subsection Resize the minibuffer automatically
+
+Often there is more data in the minibuffer than would fit into a single
+line.  With this code the minibuffer expands automatically to show the
+entire contents.
+
+@lisp
+(require 'rsz-mini)
+(resize-minibuffer-mode 1)
+@end lisp
+
+@node Dealing with X specific packages, Rebinding the numeric keypad, Resize the minibuffer automatically, Tips and Tricks
+@subsection Dealing with X specific packages
+
+Some emacs lisp packages explicitly call X specific functions instead of
+calling Emacs for NS generic function which call the NS or X versions as
+appropriate.  Typically such packages will result in error messages like
+@samp{Symbol's function definition is void: x-foo-bar}.  The proper way
+of dealing with this is to have the author fix the code to call the
+generic functions.  Generally all that requires is removing the
+@samp{x-} prefix from all function calls.
+
+However, sometimes that is not possible.  In such @file{ns-compat.el}
+can help.  It redefines the X specific functions to call the generic
+functions without requiring any changes in code and so should make most
+X specific packages work.  To load @file{ns-compat.el} each time you
+start Emacs, add this line to your @file{~/.emacs}.
+
+@lisp
+(require 'ns-compat)
+@end lisp
+
+@node Rebinding the numeric keypad, Improving C mode, Dealing with X specific packages, Tips and Tricks
+@subsection Rebinding the numeric keypad
+
+By default in Emacs the numeric keypad keys are bound to the same
+characters they are in all other NS applications.  But it is easy to
+change these bindings to commands many will find more useful.  As an
+example here is the code which rebinds the numeric keypad for me.
+
+@lisp
+(global-set-key [kp-0] 'other-window)
+(global-set-key [kp-1] 'end-of-buffer)
+(global-set-key [kp-2] [down])
+(global-set-key [kp-3] 'scroll-up)
+(global-set-key [kp-4] [left])
+(global-set-key [kp-5] 'set-mark-command)
+(global-set-key [kp-6] [right])
+(global-set-key [kp-7] 'beginning-of-buffer)
+(global-set-key [kp-8] [up])
+(global-set-key [kp-9] 'scroll-down)
+(global-set-key [kp-decimal] 'yank)
+(global-set-key [kp-enter] 'set-mark-command)
+(global-set-key [kp-add] 'copy-region-as-kill)
+(global-set-key [kp-subtract] 'kill-region)
+@end lisp
+
+On machines with function keys they can be bound as well.  This for
+example would bind @key{F12} to run gnus.
+
+@lisp
+(global-set-key [f12] 'gnus)
+@end lisp
+
+@node Improving C mode, Custom menu items, Rebinding the numeric keypad, Tips and Tricks
+@subsection Improving C mode
+
+That underscores are considered to break words in C mode has been
+driving me insane for a long time.  This line fixes the problem.
+
+@lisp
+(modify-syntax-entry ?_ "w" c-mode-syntax-table)
+@end lisp
+
+@node Custom menu items, Single line scrolling, Improving C mode, Tips and Tricks
+@subsection Custom menu items
+
+The tools menu is intended for customization.  Adding items to it is
+relatively painless as this example illustrates.
+
+@lisp
+(define-key global-map [menu-bar tools www] '("WWW" . w3-use-hotlist))
+@end lisp
+
+@node Single line scrolling, Extended font customization, Custom menu items, Tips and Tricks
+@subsection Single line scrolling
+
+Scott Hess contributed these lines which make alternate arrow keys
+behave in Emacs just like they do in Stuart.app.
+
+@lisp
+(defun scroll-one-line-down (arg)
+  (interactive "p")
+  (scroll-down arg))
+
+(defun scroll-one-line-up (arg)
+  (interactive "p")
+  (scroll-up arg))
+
+(global-set-key [M-up] 'scroll-one-line-down)
+(global-set-key [M-down] 'scroll-one-line-up)
+@end lisp
+
+@node Extended font customization,  , Single line scrolling, Tips and Tricks
+@subsection Extended font customization
+
+By default Emacs tries to guess the right font when you ask for a bold,
+italic or bold-italic face.  Unfortunately this fails sometimes, for
+example Emacs won't guess that it should use @samp{Courier-Bold} as the
+font for the bold face of @samp{Ohlfs}.  As an example here is the code
+which sets up @samp{Courier-Bold}, @samp{Courier-Oblique} and
+@samp{Courier-BoldOblique} as the fonts to be used with @samp{Ohlfs}.
+
+@lisp
+(setq ns-convert-font-trait-alist
+      '(("Ohlfs" "Courier-Bold" "Courier-Oblique"
+         "Courier-BoldOblique")))
+@end lisp
+
+You will still have to set the @samp{DefaultFont}, @samp{BoldFont},
+@samp{ItalicFont} and @samp{Bold-ItalicFont} defaults as Emacs
+initializes the default faces before it reads your @file{~/.emacs}.
+Also Emacs initializes @code{ns-convert-font-trait-alist} from these
+defaults so that normally it's sufficient to set these defaults to get
+correct faces.
+
+@example
+dwrite Emacs DefaultFont Ohlfs
+dwrite Emacs BoldFont Courier-Bold
+dwrite Emacs ItalicFont Courier-Oblique
+dwrite Emacs Bold-ItalicFont Courier-BoldOblique
+@end example
+
+@node Thanks,  , Tips and Tricks, Top
+@section Thanks
+A signficant number of people have been involved in the creation of
+Emacs for NS.  Carl Edman <cedman@@lynx.ps.uci.edu> has created and
+maintained Emacs up to version 4.1 and it's reasonable to say that
+without his work, Emacs for NS wouldn't exist.  Christian Limpach
+<chris@@nice.ch> has tookn over maintenance and updating at
+version 4.2.  Also Michael Brouwer <michael@@thi.nl> is and has been a
+constant contributor to Emacs for NS. Scott Bender <sbender@@harmony-ds.com> ported the code to OpenStep and Rhapsody and will maintain future releases for these platforms.
+
+Also a number of others have contributed code.  Steve Nygard 
+<nygard@@telusplanet.net> got emacs to dump under OpenStep. Scott Hess
+<scott@@nic.gac.edu> helped with the keyboard handling.  Timothy Bissell
+<bisselt@@gb.swissbank.com> wrote the ProjectBuilder glue.  Scott Byer
+<byer@@mv.us.adobe.com> suggested and partly wrote the ISOLatin1
+compatibility code.  The new faster code for dumping characters to the
+screen is also all his fault.  The font panel code was Andrew Athans
+<athan@@object.com> work.  Joe Reiss <jreiss@@magnus.acs.ohio-state.edu>
+both created the beautiful icons you see and wrote the popup menu and
+dialog box code as well as much else.  David Griffiths
+<dave@@prim.demon.co.uk> sent me the code which made a reasonable (or
+nearly so) NS file requester possible.  Some window manipulation code
+was stolen from John C. Randolph.  And Darcy Brockbank
+<darcy@@amber.hasc.ca> fixed the dreaded 8-bit color bug which popped up
+in NS3.3.
+@ignore
+Christian Limpach <Christian.Limpach@@nice.ch> in addition to
+his help with tracking down bugs and fixing features wrote code which
+improved the font handling of emacs.
+@end ignore
+
+Axel Seibert <seiberta@@informatik.tu-muenchen.de> and Paul J. Sanchez
+<paul@@whimsy.umsl.edu> offered their time and machines to make a
+binary release possible.
+
+Then there were a number of people who kept up the constant supply of
+bug reports, suggested features and praise (which is the main fuel which
+the development of a project like this runs) and so helped ensure that
+this program is as bug free (hah !)  and feature rich as you see it
+today.  First among them were Hardy Mayer <hardy@@golem.ps.uci.edu>,
+Gisli Ottarsson <gisli@@timoshenko.eecs.umich.edu>, Anthony Heading
+<ajrh@@signal.dra.hmg.gb>, David Bau <bau@@cs.cornell.edu>, Jamie
+Zawinski <jwz@@lucid.com>, Martin Moncrieffe <moncrief@@mayo.edu>,
+Simson L. Garfinkel <simsong@@next.cambridge.ma.us>, Richard Stallman
+<rms@@gnu.ai.mit.edu>, Stephen Anderson <anderson@@sapir.cog.jhu.edu>,
+Ivo Welch <ivo@@next.agsm.ucla.edu>, Magnus Nordborg
+<magnus@@fisher.Stanford.EDU>, Tom Epperly
+<epperly@@valeron.che.wisc.edu>, Andreas Koenig
+<k@@franz.ww.tu-berlin.de>, Yves Arrouye <Yves.Arrouye@@imag.fr>, Anil
+Somayaji <soma@@hotspur.mit.edu>, Gregor Hoffleit
+<flight@@mathi.uni-heidelberg.DE> and doubtlessly many more.
+
+Finally, let us also thank those few hundred other people on the mailing
+list from whom we didn't hear much, but the presence of which assured us
+that maybe this project was actually worth doing.
+@bye

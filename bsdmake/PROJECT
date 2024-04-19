@@ -1,0 +1,9 @@
+Project		: bsdmake
+Description	: BSD Make
+Distribution	: NetBSD Mon Nov 10 13:11:40 PST 1997
+Source		: NetBSD Foundation, Inc.
+Location	: cvs.netbsd.org:/cvsroot
+Owner		: wsanchez
+Releases	: Titan
+Dependancies	: 
+

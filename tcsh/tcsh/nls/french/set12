@@ -1,0 +1,4 @@
+$ $Id: set12,v 1.1.1.1 1997/08/29 17:58:03 wsanchez Exp $
+$ sh.dir.c
+$set 12 
+1 %s: Essaie de démarrer à partir de "%s"\n

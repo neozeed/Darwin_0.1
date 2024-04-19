@@ -1,0 +1,20 @@
+##
+# emacs
+##
+
+Title		GNU Emacs (source code)
+BuildDiskTitle	GNU Emacs (source code)
+Version		20.2
+Description	This package contains Emacs, the GNU text editor. Due to its powerful extensibility, Emacs is a lot more than a text editor; it features a full development environment, a mail viewer, a web browser, a lisp interpreter, and thousands of other tools, modes, and hacks.
+
+DefaultLocation		/System/Developer/Source/Commands/emacs
+Relocatable		YES
+Diskname		emacs #%d
+
+NeedsAuthorization	YES
+Application		NO
+LibrarySubdirectory	Standard
+InstallOnly 		YES
+DisableStop		NO
+LongFilenames		YES
+#DeleteWarning		Deleting this may be a bad thing because...

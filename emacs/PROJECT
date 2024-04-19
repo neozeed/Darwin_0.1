@@ -1,0 +1,10 @@
+Project		: emacs
+Description	: GNU Text Editor
+Distribution	: 20.2
+Source		: Free Software Foundation
+Location	: ftp://prep.ai.mit.edu/pub/gnu/emacs-20.2.tar.gz
+Owner		: wsanchez
+Releases	: 
+Dependancies	: 
+
+The Emacs for NextStep code has been ported to OpenStep and Rhapsody and brought up to emacs 20. See the file README. Many thanks to the folks involved in that effort.

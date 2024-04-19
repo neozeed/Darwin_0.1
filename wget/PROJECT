@@ -1,0 +1,9 @@
+Project		: wget
+Description	: wget
+Distribution	: 1.4.5
+Source		: Free Software Foundation
+Location	: ftp://prep.ai.mit.edu/pub/gnu/wget-1.4.5.tar.gz
+Owner		: wsanchez
+Releases	: 
+Dependancies	: 
+

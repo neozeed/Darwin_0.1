@@ -1,0 +1,20 @@
+##
+# ncftp
+##
+
+Title		ncftp
+BuildDiskTitle	ncftp
+Version		2.4.2
+Description	This package contains the ncftp ftp client.
+
+DefaultLocation		/
+Relocatable		NO
+Diskname		ncftp #%d
+
+NeedsAuthorization	YES
+Application		NO
+LibrarySubdirectory	Standard
+InstallOnly 		YES
+DisableStop		NO
+LongFilenames		YES
+#DeleteWarning		Deleting this may be a bad thing because...

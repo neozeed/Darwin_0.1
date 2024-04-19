@@ -1,0 +1,87 @@
+This is Info file ../info/viper, produced by Makeinfo-1.64 from the
+input file viper.texi.
+
+Distribution
+************
+
+Copyright (C) 1995, 1996, 1997 Free Software Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the same conditions as for modified
+versions.
+
+
+Indirect:
+viper-1: 750
+viper-2: 49097
+viper-3: 89454
+viper-4: 138871
+viper-5: 179980
+
+Tag Table:
+(Indirect)
+Node: Top750
+Node: Overview3153
+Node: Emacs Preliminaries4161
+Node: Loading Viper9083
+Node: States in Viper11241
+Node: Emacs State15863
+Node: Vi State17412
+Node: Insert State24192
+Node: Replace State27044
+Node: The Minibuffer28683
+Node: Multiple Files in Viper30326
+Node: Unimplemented Features33681
+Node: Improvements over Vi34430
+Node: Basics35514
+Node: Undo and Backups37951
+Node: History39107
+Node: Macros and Registers40700
+Node: Completion42370
+Node: Improved Search42789
+Node: Abbreviation Facilities45098
+Node: Movement and Markers46066
+Node: New Commands49097
+Node: Useful Packages54781
+Node: Customization56831
+Node: Rudimentary Changes58436
+Node: Keybindings74027
+Node: Packages that Change Keymaps83337
+Node: Viper Specials89454
+Node: Vi Macros106907
+Node: Commands120508
+Node: Groundwork121252
+Node: Text Handling126926
+Node: Move Commands127480
+Node: Marking131208
+Node: Appending Text132161
+Node: Editing in Insert State134478
+Node: Deleting Text135054
+Node: Changing Text136383
+Node: Search and Replace138871
+Node: Yanking140734
+Node: Undoing141640
+Node: Display141970
+Node: File and Buffer Handling143271
+Node: Mapping147086
+Node: Shell Commands148767
+Node: Options150304
+Node: Emacs Related Commands152498
+Node: Mouse-bound Commands154058
+Node: Acknowledgments155028
+Node: Key Index157317
+Node: Function Index168270
+Node: Variable Index175411
+Node: Package Index179450
+Node: Concept Index179980
+
+End Tag Table

@@ -1,0 +1,1211 @@
+This is Info file ../info/emacs, produced by Makeinfo version 1.68 from
+the input file emacs.texi.
+
+
+File: emacs,  Node: Find Tag,  Next: Tags Search,  Prev: Select Tags Table,  Up: Tags
+
+Finding a Tag
+-------------
+
+   The most important thing that a tags table enables you to do is to
+find the definition of a specific tag.
+
+`M-. TAG <RET>'
+     Find first definition of TAG (`find-tag').
+
+`C-u M-.'
+     Find next alternate definition of last tag specified.
+
+`C-u - M-.'
+     Go back to previous tag found.
+
+`C-M-. PATTERN <RET>'
+     Find a tag whose name matches PATTERN (`find-tag-regexp').
+
+`C-u C-M-.'
+     Find the next tag whose name matches the last pattern used.
+
+`C-x 4 . TAG <RET>'
+     Find first definition of TAG, but display it in another window
+     (`find-tag-other-window').
+
+`C-x 5 . TAG <RET>'
+     Find first definition of TAG, and create a new frame to select the
+     buffer (`find-tag-other-frame').
+
+   `M-.' (`find-tag') is the command to find the definition of a
+specified tag.  It searches through the tags table for that tag, as a
+string, and then uses the tags table info to determine the file that the
+definition is in and the approximate character position in the file of
+the definition.  Then `find-tag' visits that file, moves point to the
+approximate character position, and searches ever-increasing distances
+away to find the tag definition.
+
+   If an empty argument is given (just type <RET>), the sexp in the
+buffer before or around point is used as the TAG argument.  *Note
+Lists::, for info on sexps.
+
+   You don't need to give `M-.' the full name of the tag; a part will
+do.  This is because `M-.' finds tags in the table which contain TAG as
+a substring.  However, it prefers an exact match to a substring match.
+To find other tags that match the same substring, give `find-tag' a
+numeric argument, as in `C-u M-.'; this does not read a tag name, but
+continues searching the tags table's text for another tag containing
+the same substring last used.  If you have a real <META> key, `M-0 M-.'
+is an easier alternative to `C-u M-.'.
+
+   Like most commands that can switch buffers, `find-tag' has a variant
+that displays the new buffer in another window, and one that makes a
+new frame for it.  The former is `C-x 4 .', which invokes the command
+`find-tag-other-window'.  The latter is `C-x 5 .', which invokes
+`find-tag-other-frame'.
+
+   To move back to places you've found tags recently, use `C-u - M-.';
+more generally, `M-.' with a negative numeric argument.  This command
+can take you to another buffer.  `C-x 4 .' with a negative argument
+finds the previous tag location in another window.
+
+   The command `C-M-.' (`find-tag-regexp') visits the tags that match a
+specified regular expression.  It is just like `M-.'  except that it
+does regexp matching instead of substring matching.
+
+
+File: emacs,  Node: Tags Search,  Next: List Tags,  Prev: Find Tag,  Up: Tags
+
+Searching and Replacing with Tags Tables
+----------------------------------------
+
+   The commands in this section visit and search all the files listed
+in the selected tags table, one by one.  For these commands, the tags
+table serves only to specify a sequence of files to search.
+
+`M-x tags-search <RET> REGEXP <RET>'
+     Search for REGEXP through the files in the selected tags table.
+
+`M-x tags-query-replace <RET> REGEXP <RET> REPLACEMENT <RET>'
+     Perform a `query-replace-regexp' on each file in the selected tags
+     table.
+
+`M-,'
+     Restart one of the commands above, from the current location of
+     point (`tags-loop-continue').
+
+   `M-x tags-search' reads a regexp using the minibuffer, then searches
+for matches in all the files in the selected tags table, one file at a
+time.  It displays the name of the file being searched so you can
+follow its progress.  As soon as it finds an occurrence, `tags-search'
+returns.
+
+   Having found one match, you probably want to find all the rest.  To
+find one more match, type `M-,' (`tags-loop-continue') to resume the
+`tags-search'.  This searches the rest of the current buffer, followed
+by the remaining files of the tags table.
+
+   `M-x tags-query-replace' performs a single `query-replace-regexp'
+through all the files in the tags table.  It reads a regexp to search
+for and a string to replace with, just like ordinary `M-x
+query-replace-regexp'.  It searches much like `M-x tags-search', but
+repeatedly, processing matches according to your input.  *Note
+Replace::, for more information on query replace.
+
+   It is possible to get through all the files in the tags table with a
+single invocation of `M-x tags-query-replace'.  But often it is useful
+to exit temporarily, which you can do with any input event that has no
+special query replace meaning.  You can resume the query replace
+subsequently by typing `M-,'; this command resumes the last tags search
+or replace command that you did.
+
+   The commands in this section carry out much broader searches than the
+`find-tag' family.  The `find-tag' commands search only for definitions
+of tags that match your substring or regexp.  The commands
+`tags-search' and `tags-query-replace' find every occurrence of the
+regexp, as ordinary search commands and replace commands do in the
+current buffer.
+
+   These commands create buffers only temporarily for the files that
+they have to search (those which are not already visited in Emacs
+buffers).  Buffers in which no match is found are quickly killed; the
+others continue to exist.
+
+   It may have struck you that `tags-search' is a lot like `grep'.  You
+can also run `grep' itself as an inferior of Emacs and have Emacs show
+you the matching lines one by one.  This works much like running a
+compilation; finding the source locations of the `grep' matches works
+like finding the compilation errors.  *Note Compilation::.
+
+
+File: emacs,  Node: List Tags,  Prev: Tags Search,  Up: Tags
+
+Tags Table Inquiries
+--------------------
+
+`M-x list-tags <RET> FILE <RET>'
+     Display a list of the tags defined in the program file `file'.
+
+`M-x tags-apropos <RET> REGEXP <RET>'
+     Display a list of all tags matching REGEXP.
+
+   `M-x list-tags' reads the name of one of the files described by the
+selected tags table, and displays a list of all the tags defined in
+that file.  The "file name" argument is really just a string to compare
+against the file names recorded in the tags table; it is read as a
+string rather than as a file name.  Therefore, completion and
+defaulting are not available, and you must enter the file name the same
+way it appears in the tags table.  Do not include a directory as part of
+the file name unless the file name recorded in the tags table includes a
+directory.
+
+   `M-x tags-apropos' is like `apropos' for tags (*note Apropos::.).
+It reads a regexp, then finds all the tags in the selected tags table
+whose entries match that regexp, and displays the tag names found.
+
+   You can also perform completion in the buffer on the name space of
+tag names in the current tags tables.  *Note Symbol Completion::.
+
+
+File: emacs,  Node: Emerge,  Next: C/Java Modes,  Prev: Tags,  Up: Programs
+
+Merging Files with Emerge
+=========================
+
+   It's not unusual for programmers to get their signals crossed and
+modify the same program in two different directions.  To recover from
+this confusion, you need to merge the two versions.  Emerge makes this
+easier.  See also *Note Comparing Files::.
+
+* Menu:
+
+* Overview of Emerge::	How to start Emerge.  Basic concepts.
+* Submodes of Emerge::	Fast mode vs. Edit mode.
+			  Skip Prefers mode and Auto Advance mode.
+* State of Difference::	You do the merge by specifying state A or B
+			  for each difference.
+* Merge Commands::	Commands for selecting a difference,
+			  changing states of differences, etc.
+* Exiting Emerge::	What to do when you've finished the merge.
+* Combining in Emerge::	    How to keep both alternatives for a difference.
+* Fine Points of Emerge::   Misc.
+
+
+File: emacs,  Node: Overview of Emerge,  Next: Submodes of Emerge,  Up: Emerge
+
+Overview of Emerge
+------------------
+
+   To start Emerge, run one of these four commands:
+
+`M-x emerge-files'
+     Merge two specified files.
+
+`M-x emerge-files-with-ancestor'
+     Merge two specified files, with reference to a common ancestor.
+
+`M-x emerge-buffers'
+     Merge two buffers.
+
+`M-x emerge-buffers-with-ancestor'
+     Merge two buffers with reference to a common ancestor in a third
+     buffer.
+
+   The Emerge commands compare two files or buffers, and display the
+comparison in three buffers: one for each input text (the "A buffer"
+and the "B buffer"), and one (the "merge buffer") where merging takes
+place.  The merge buffer shows the full merged text, not just the
+differences.  Wherever the two input texts differ, you can choose which
+one of them to include in the merge buffer.
+
+   The Emerge commands that take input from existing buffers use only
+the accessible portions of those buffers, if they are narrowed (*note
+Narrowing::.).
+
+   If a common ancestor version is available, from which the two texts
+to be merged were both derived, Emerge can use it to guess which
+alternative is right.  Wherever one current version agrees with the
+ancestor, Emerge presumes that the other current version is a deliberate
+change which should be kept in the merged version.  Use the
+`with-ancestor' commands if you want to specify a common ancestor text.
+These commands read three file or buffer names--variant A, variant B,
+and the common ancestor.
+
+   After the comparison is done and the buffers are prepared, the
+interactive merging starts.  You control the merging by typing special
+"merge commands" in the merge buffer.  The merge buffer shows you a
+full merged text, not just differences.  For each run of differences
+between the input texts, you can choose which one of them to keep, or
+edit them both together.
+
+   The merge buffer uses a special major mode, Emerge mode, with
+commands for making these choices.  But you can also edit the buffer
+with ordinary Emacs commands.
+
+   At any given time, the attention of Emerge is focused on one
+particular difference, called the "selected" difference.  This
+difference is marked off in the three buffers like this:
+
+     vvvvvvvvvvvvvvvvvvvv
+     TEXT THAT DIFFERS
+     ^^^^^^^^^^^^^^^^^^^^
+
+Emerge numbers all the differences sequentially and the mode line
+always shows the number of the selected difference.
+
+   Normally, the merge buffer starts out with the A version of the text.
+But when the A version of a difference agrees with the common ancestor,
+then the B version is initially preferred for that difference.
+
+   Emerge leaves the merged text in the merge buffer when you exit.  At
+that point, you can save it in a file with `C-x C-w'.  If you give a
+numeric argument to `emerge-files' or `emerge-files-with-ancestor', it
+reads the name of the output file using the minibuffer.  (This is the
+last file name those commands read.)  Then exiting from Emerge saves
+the merged text in the output file.
+
+   Normally, Emerge commands save the output buffer in its file when you
+exit.  If you abort Emerge with `C-]', the Emerge command does not save
+the output buffer, but you can save it yourself if you wish.
+
+
+File: emacs,  Node: Submodes of Emerge,  Next: State of Difference,  Prev: Overview of Emerge,  Up: Emerge
+
+Submodes of Emerge
+------------------
+
+   You can choose between two modes for giving merge commands: Fast mode
+and Edit mode.  In Fast mode, basic merge commands are single
+characters, but ordinary Emacs commands are disabled.  This is
+convenient if you use only merge commands.  In Edit mode, all merge
+commands start with the prefix key `C-c C-c', and the normal Emacs
+commands are also available.  This allows editing the merge buffer, but
+slows down Emerge operations.
+
+   Use `e' to switch to Edit mode, and `C-c C-c f' to switch to Fast
+mode.  The mode line indicates Edit and Fast modes with `E' and `F'.
+
+   Emerge has two additional submodes that affect how particular merge
+commands work: Auto Advance mode and Skip Prefers mode.
+
+   If Auto Advance mode is in effect, the `a' and `b' commands advance
+to the next difference.  This lets you go through the merge faster as
+long as you simply choose one of the alternatives from the input.  The
+mode line indicates Auto Advance mode with `A'.
+
+   If Skip Prefers mode is in effect, the `n' and `p' commands skip
+over differences in states prefer-A and prefer-B (*note State of
+Difference::.).  Thus you see only differences for which neither version
+is presumed "correct."  The mode line indicates Skip Prefers mode with
+`S'.
+
+   Use the command `s a' (`emerge-auto-advance-mode') to set or clear
+Auto Advance mode.  Use `s s' (`emerge-skip-prefers-mode') to set or
+clear Skip Prefers mode.  These commands turn on the mode with a
+positive argument, turns it off with a negative or zero argument, and
+toggle the mode with no argument.
+
+
+File: emacs,  Node: State of Difference,  Next: Merge Commands,  Prev: Submodes of Emerge,  Up: Emerge
+
+State of a Difference
+---------------------
+
+   In the merge buffer, a difference is marked with lines of `v' and
+`^' characters.  Each difference has one of these seven states:
+
+A
+     The difference is showing the A version.  The `a' command always
+     produces this state; the mode line indicates it with `A'.
+
+B
+     The difference is showing the B version.  The `b' command always
+     produces this state; the mode line indicates it with `B'.
+
+default-A
+default-B
+     The difference is showing the A or the B state by default, because
+     you haven't made a choice.  All differences start in the default-A
+     state (and thus the merge buffer is a copy of the A buffer),
+     except those for which one alternative is "preferred" (see below).
+
+     When you select a difference, its state changes from default-A or
+     default-B to plain A or B.  Thus, the selected difference never has
+     state default-A or default-B, and these states are never displayed
+     in the mode line.
+
+     The command `d a' chooses default-A as the default state, and `d
+     b' chooses default-B.  This chosen default applies to all
+     differences which you haven't ever selected and for which no
+     alternative is preferred.  If you are moving through the merge
+     sequentially, the differences you haven't selected are those
+     following the selected one.  Thus, while moving sequentially, you
+     can effectively make the A version the default for some sections
+     of the merge buffer and the B version the default for others by
+     using `d a' and `d b' between sections.
+
+prefer-A
+prefer-B
+     The difference is showing the A or B state because it is
+     "preferred".  This means that you haven't made an explicit choice,
+     but one alternative seems likely to be right because the other
+     alternative agrees with the common ancestor.  Thus, where the A
+     buffer agrees with the common ancestor, the B version is
+     preferred, because chances are it is the one that was actually
+     changed.
+
+     These two states are displayed in the mode line as `A*' and `B*'.
+
+combined
+     The difference is showing a combination of the A and B states, as a
+     result of the `x c' or `x C' commands.
+
+     Once a difference is in this state, the `a' and `b' commands don't
+     do anything to it unless you give them a numeric argument.
+
+     The mode line displays this state as `comb'.
+
+
+File: emacs,  Node: Merge Commands,  Next: Exiting Emerge,  Prev: State of Difference,  Up: Emerge
+
+Merge Commands
+--------------
+
+   Here are the Merge commands for Fast mode; in Edit mode, precede them
+with `C-c C-c':
+
+`p'
+     Select the previous difference.
+
+`n'
+     Select the next difference.
+
+`a'
+     Choose the A version of this difference.
+
+`b'
+     Choose the B version of this difference.
+
+`C-u N j'
+     Select difference number N.
+
+`.'
+     Select the difference containing point.  You can use this command
+     in the merge buffer or in the A or B buffer.
+
+`q'
+     Quit--finish the merge.
+
+`C-]'
+     Abort--exit merging and do not save the output.
+
+`f'
+     Go into Fast mode.  (In Edit mode, this is actually `C-c C-c f'.)
+
+`e'
+     Go into Edit mode.
+
+`l'
+     Recenter (like `C-l') all three windows.
+
+`-'
+     Specify part of a prefix numeric argument.
+
+`DIGIT'
+     Also specify part of a prefix numeric argument.
+
+`d a'
+     Choose the A version as the default from here down in the merge
+     buffer.
+
+`d b'
+     Choose the B version as the default from here down in the merge
+     buffer.
+
+`c a'
+     Copy the A version of this difference into the kill ring.
+
+`c b'
+     Copy the B version of this difference into the kill ring.
+
+`i a'
+     Insert the A version of this difference at point.
+
+`i b'
+     Insert the B version of this difference at point.
+
+`m'
+     Put point and mark around the difference.
+
+`^'
+     Scroll all three windows down (like `M-v').
+
+`v'
+     Scroll all three windows up (like `C-v').
+
+`<'
+     Scroll all three windows left (like `C-x <').
+
+`>'
+     Scroll all three windows right (like `C-x >').
+
+`|'
+     Reset horizontal scroll on all three windows.
+
+`x 1'
+     Shrink the merge window to one line.  (Use `C-u l' to restore it
+     to full size.)
+
+`x c'
+     Combine the two versions of this difference (*note Combining in
+     Emerge::.).
+
+`x f'
+     Show the names of the files/buffers Emerge is operating on, in a
+     Help window.  (Use `C-u l' to restore windows.)
+
+`x j'
+     Join this difference with the following one.  (`C-u x j' joins
+     this difference with the previous one.)
+
+`x s'
+     Split this difference into two differences.  Before you use this
+     command, position point in each of the three buffers at the place
+     where you want to split the difference.
+
+`x t'
+     Trim identical lines off the top and bottom of the difference.
+     Such lines occur when the A and B versions are identical but
+     differ from the ancestor version.
+
+
+File: emacs,  Node: Exiting Emerge,  Next: Combining in Emerge,  Prev: Merge Commands,  Up: Emerge
+
+Exiting Emerge
+--------------
+
+   The `q' command (`emerge-quit') finishes the merge, storing the
+results into the output file if you specified one.  It restores the A
+and B buffers to their proper contents, or kills them if they were
+created by Emerge and you haven't changed them.  It also disables the
+Emerge commands in the merge buffer, since executing them later could
+damage the contents of the various buffers.
+
+   `C-]' aborts the merge.  This means exiting without writing the
+output file.  If you didn't specify an output file, then there is no
+real difference between aborting and finishing the merge.
+
+   If the Emerge command was called from another Lisp program, then its
+return value is `t' for successful completion, or `nil' if you abort.
+
+
+File: emacs,  Node: Combining in Emerge,  Next: Fine Points of Emerge,  Prev: Exiting Emerge,  Up: Emerge
+
+Combining the Two Versions
+--------------------------
+
+   Sometimes you want to keep *both* alternatives for a particular
+difference.  To do this, use `x c', which edits the merge buffer like
+this:
+
+     #ifdef NEW
+     VERSION FROM A BUFFER
+     #else /* not NEW */
+     VERSION FROM B BUFFER
+     #endif /* not NEW */
+
+While this example shows C preprocessor conditionals delimiting the two
+alternative versions, you can specify the strings to use by setting the
+variable `emerge-combine-versions-template' to a string of your choice.
+In the string, `%a' says where to put version A, and `%b' says where
+to put version B.  The default setting, which produces the results
+shown above, looks like this:
+
+     "#ifdef NEW\n%a#else /* not NEW */\n%b#endif /* not NEW */\n"
+
+
+File: emacs,  Node: Fine Points of Emerge,  Prev: Combining in Emerge,  Up: Emerge
+
+Fine Points of Emerge
+---------------------
+
+   During the merge, you mustn't try to edit the A and B buffers
+yourself.  Emerge modifies them temporarily, but ultimately puts them
+back the way they were.
+
+   You can have any number of merges going at once--just don't use any
+one buffer as input to more than one merge at once, since the temporary
+changes made in these buffers would get in each other's way.
+
+   Starting Emerge can take a long time because it needs to compare the
+files fully.  Emacs can't do anything else until `diff' finishes.
+Perhaps in the future someone will change Emerge to do the comparison in
+the background when the input files are large--then you could keep on
+doing other things with Emacs until Emerge is ready to accept commands.
+
+   After setting up the merge, Emerge runs the hook
+`emerge-startup-hook' (*note Hooks::.).
+
+
+File: emacs,  Node: C/Java Modes,  Next: Fortran,  Prev: Emerge,  Up: Programs
+
+C Modes and Java Mode
+=====================
+
+   This section describes special features available in C, C++,
+Objective-C and Java modes.
+
+* Menu:
+
+* Motion in C::
+* Electric C::
+* Hungry Delete::
+* Other C Commands::
+* Comments in C::
+
+
+File: emacs,  Node: Motion in C,  Next: Electric C,  Up: C/Java Modes
+
+C Mode Motion Commands
+----------------------
+
+   This section describes commands for moving point, in C mode and
+related modes.
+
+`C-c C-u'
+     Move point back to the containing preprocessor conditional,
+     leaving the mark behind.  A prefix argument acts as a repeat
+     count.  With a negative argument, move point forward to the end of
+     the containing preprocessor conditional.  When going backwards,
+     `#elif' is treated like `#else' followed by `#if'.  When going
+     forwards, `#elif' is ignored.
+
+`C-c C-p'
+     Move point back over a preprocessor conditional, leaving the mark
+     behind.  A prefix argument acts as a repeat count.  With a negative
+     argument, move forward.
+
+`C-c C-n'
+     Move point forward across a preprocessor conditional, leaving the
+     mark behind.  A prefix argument acts as a repeat count.  With a
+     negative argument, move backward.
+
+`M-a'
+     Move point to the beginning of the innermost C statement
+     (`c-beginning-of-statement').  If point is already at the beginning
+     of a statement, move to the beginning of the preceding statement.
+     With prefix argument N, move back N - 1 statements.
+
+     If point is within a string or comment, or next to a comment (only
+     whitespace between them), this command moves by sentences instead
+     of statements.
+
+     When called from a program, this function takes three optional
+     arguments: the numeric prefix argument, a buffer position limit
+     (don't move back before that place), and a flag that controls
+     whether to do sentence motion when inside of a comment.
+
+`M-e'
+     Move point to the end of the innermost C statement; like `M-a'
+     except that it moves in the other direction (`c-end-of-statement').
+
+`M-x c-backward-into-nomenclature'
+     Move point backward to beginning of a C++ nomenclature section or
+     word.  With prefix argument N, move N times.  If N is negative,
+     move forward.  C++ nomenclature means a symbol name in the style
+     of NamingSymbolsWithMixedCaseAndNoUnderlines; each capital letter
+     begins a section or word.
+
+     In the GNU project, we recommend using underscores to separate
+     words within an identifier in C or C++, rather than using case
+     distinctions.
+
+`M-x c-forward-into-nomenclature'
+     Move point forward to end of a C++ nomenclature section or word.
+     With prefix argument N, move N times.
+
+
+File: emacs,  Node: Electric C,  Next: Hungry Delete,  Prev: Motion in C,  Up: C/Java Modes
+
+Electric C Characters
+---------------------
+
+   In C mode and related modes, certain printing characters are
+"electric"--in addition to inserting themselves, they also reindent the
+current line and may insert newlines.  This feature is controlled by
+the variable `c-auto-newline'.  The "electric" characters are `{', `}',
+`:', `#', `;', `,', `<', `>', `/' and `*'.
+
+   Electric characters insert newlines only when the "auto-newline"
+feature is enabled (indicated by `/a' in the mode line after the mode
+name).  This feature is controlled by the variable `c-auto-newline'.
+You can turn this feature on or off with the command `C-c C-a':
+
+`C-c C-a'
+     Toggle the auto-newline feature (`c-toggle-auto-state').  With a
+     prefix argument, this command turns the auto-newline feature on if
+     the argument is positive, and off if it is negative.
+
+   The colon character is electric because that is appropriate for a
+single colon.  But when you want to insert a double colon in C++, the
+electric behavior of colon is inconvenient.  You can insert a double
+colon with no reindentation or newlines by typing `C-c :':
+
+`C-c :'
+     Insert a double colon scope operator at point, without reindenting
+     the line or adding any newlines (`c-scope-operator').
+
+   The electric `#' key reindents the line if it appears to be the
+beginning of a preprocessor directive.  This happens when the value of
+`c-electric-pound-behavior' is `(alignleft)'.  You can turn this
+feature off by setting `c-electric-pound-behavior' to `nil'.
+
+   The variable `c-hanging-braces-alist' controls the insertion of
+newlines before and after inserted braces.  It is an association list
+with elements of the following form: `(SYNTACTIC-SYMBOL . NL-LIST)'.
+Most of the syntactic symbols that appear in `c-offsets-alist' are
+meaningful here as well.
+
+   The list NL-LIST may contain either of the symbols `before' or
+`after', or both; or it may be `nil'.  When a brace is inserted, the
+syntactic context it defines is looked up in `c-hanging-braces-alist';
+if it is found, the NL-LIST is used to determine where newlines are
+inserted: either before the brace, after, or both.  If not found, the
+default is to insert a newline both before and after braces.
+
+   The variable `c-hanging-colons-alist' controls the insertion of
+newlines before and after inserted colons.  It is an association list
+with elements of the following form: `(SYNTACTIC-SYMBOL . NL-LIST)'.
+The list NL-LIST may contain either of the symbols `before' or `after',
+or both; or it may be `nil'.
+
+   When a colon is inserted, the syntactic symbol it defines is looked
+up in this list, and if found, the NL-LIST is used to determine where
+newlines are inserted: either before the brace, after, or both.  If the
+syntactic symbol is not found in this list, no newlines are inserted.
+
+   Electric characters can also delete newlines automatically when the
+auto-newline feature is enabled.  This feature makes auto-newline more
+acceptable, by deleting the newlines in the most common cases where you
+do not want them.  Emacs can recognize several cases in which deleting a
+newline might be desirable; by setting the variable `c-cleanup-list',
+you can specify *which* of these cases that should happen.  The
+variable's value is a list of symbols, each describing one case for
+possible deletion of a newline.  Here are the meaningful symbols, and
+their meanings:
+
+`brace-else-brace'
+     Clean up `} else {' constructs by placing the entire construct on
+     a single line.  The clean-up occurs when you type the `{' after
+     the `else', but only if there is nothing but white space between
+     the braces and the `else'.
+
+`brace-elseif-brace'
+     Clean up `} else if (...) {' constructs by placing the entire
+     construct on a single line.  The clean-up occurs when you type the
+     `{', if there is nothing but white space between the `}' and `{'
+     aside from the keywords and the `if'-condition.
+
+`empty-defun-braces'
+     Clean up empty defun braces by placing the braces on the same
+     line.  Clean-up occurs when you type the closing brace.
+
+`defun-close-semi'
+     Clean up the semicolon after a `struct' or similar type
+     declaration, by placing the semicolon on the same line as the
+     closing brace.  Clean-up occurs when you type the semicolon.
+
+`list-close-comma'
+     Clean up commas following braces in array and aggregate
+     initializers.  Clean-up occurs when you type the comma.
+
+`scope-operator'
+     Clean up double colons which may designate a C++ scope operator, by
+     placing the colons together.  Clean-up occurs when you type the
+     second colon, but only when the two colons are separated by
+     nothing but whitespace.
+
+
+File: emacs,  Node: Hungry Delete,  Next: Other C Commands,  Prev: Electric C,  Up: C/Java Modes
+
+Hungry Delete Feature in C
+--------------------------
+
+   When the "hungry-delete" feature is enabled (indicated by `/h' or
+`/ah' in the mode line after the mode name), a single <DEL> command
+deletes all preceding whitespace, not just one space.  To turn this
+feature on or off, use `C-c C-d':
+
+`C-c C-d'
+     Toggle the hungry-delete feature (`c-toggle-hungry-state').  With a
+     prefix argument, this command turns the hungry-delete feature on
+     if the argument is positive, and off if it is negative.
+
+`C-c C-t'
+     Toggle the auto-newline and hungry-delete features, both at once
+     (`c-toggle-auto-hungry-state').
+
+   The variable `c-hungry-delete-key' controls whether the
+hungry-delete feature is enabled.
+
+
+File: emacs,  Node: Other C Commands,  Next: Comments in C,  Prev: Hungry Delete,  Up: C/Java Modes
+
+Other Commands for C Mode
+-------------------------
+
+`C-M-h'
+     Put mark at the end of a function definition, and put point at the
+     beginning (`c-mark-function').
+
+`M-q'
+     Fill a paragraph, handling C and C++ comments (`c-fill-paragraph').
+     If any part of the current line is a comment or within a comment,
+     this command fills the comment or the paragraph of it that point
+     is in, preserving the comment indentation and comment delimiters.
+
+`C-c C-e'
+     Run the C preprocessor on the text in the region, and show the
+     result, which includes the expansion of all the macro calls
+     (`c-macro-expand').  The buffer text before the region is also
+     included in preprocessing, for the sake of macros defined there,
+     but the output from this part isn't shown.
+
+     When you are debugging C code that uses macros, sometimes it is
+     hard to figure out precisely how the macros expand.  With this
+     command, you don't have to figure it out; you can see the
+     expansions.
+
+`C-c C-\'
+     Insert or align `\' characters at the ends of the lines of the
+     region (`c-backslash-region').  This is useful after writing or
+     editing a C macro definition.
+
+     If a line already ends in `\', this command adjusts the amount of
+     whitespace before it.  Otherwise, it inserts a new `\'.  However,
+     the last line in the region is treated specially; no `\' is
+     inserted on that line, and any `\' there is deleted.
+
+`M-x cpp-highlight-buffer'
+     Highlight parts of the text according to its preprocessor
+     conditionals.  This command displays another buffer named `*CPP
+     Edit*', which serves as a graphic menu for selecting how to
+     display particular kinds of conditionals and their contents.
+     After changing various settings, click on `[A]pply these settings'
+     (or go to that buffer and type `a') to rehighlight the C mode
+     buffer accordingly.
+
+`C-c C-s'
+     Display the syntactic information about the current source line
+     (`c-show-syntactic-information').  This is the information that
+     directs how the line is indented.
+
+
+File: emacs,  Node: Comments in C,  Prev: Other C Commands,  Up: C/Java Modes
+
+Comments in C Modes
+-------------------
+
+   C mode and related modes use a number of variables for controlling
+comment format.
+
+`c-comment-only-line-offset'
+     Extra offset for line which contains only the start of a comment.
+     It can be either an integer or a cons cell of the form
+     `(NON-ANCHORED-OFFSET . ANCHORED-OFFSET)', where
+     NON-ANCHORED-OFFSET is the amount of offset given to
+     non-column-zero anchored comment-only lines, and ANCHORED-OFFSET
+     is the amount of offset to give column-zero anchored comment-only
+     lines.  Just an integer as value is equivalent to `(VAL . 0)'.
+
+`c-comment-start-regexp'
+     This buffer-local variable specifies how to recognize the start of
+     a comment.
+
+`c-hanging-comment-ender-p'
+     If this variable is `nil', `c-fill-paragraph' leaves the comment
+     terminator of a block comment on a line by itself.  The default
+     value is `t', which puts the comment-end delimiter `*/' at the end
+     of the last line of the comment text.
+
+`c-hanging-comment-starter-p'
+     If this variable is `nil', `c-fill-paragraph' leaves the starting
+     delimiter of a block comment on a line by itself.  The default
+     value is `t', which puts the comment-start delimiter `/*' at the
+     beginning of the first line of the comment text.
+
+
+File: emacs,  Node: Fortran,  Next: Asm Mode,  Prev: C/Java Modes,  Up: Programs
+
+Fortran Mode
+============
+
+   Fortran mode provides special motion commands for Fortran statements
+and subprograms, and indentation commands that understand Fortran
+conventions of nesting, line numbers and continuation statements.
+Fortran mode has its own Auto Fill mode that breaks long lines into
+proper Fortran continuation lines.
+
+   Special commands for comments are provided because Fortran comments
+are unlike those of other languages.  Built-in abbrevs optionally save
+typing when you insert Fortran keywords.
+
+   Use `M-x fortran-mode' to switch to this major mode.  This command
+runs the hook `fortran-mode-hook' (*note Hooks::.).
+
+* Menu:
+
+* Motion: Fortran Motion.	 Moving point by statements or subprograms.
+* Indent: Fortran Indent.	 Indentation commands for Fortran.
+* Comments: Fortran Comments.	 Inserting and aligning comments.
+* Autofill: Fortran Autofill.	 Auto fill minor mode for Fortran.
+* Columns: Fortran Columns.	 Measuring columns for valid Fortran.
+* Abbrev: Fortran Abbrev.	 Built-in abbrevs for Fortran keywords.
+
+
+File: emacs,  Node: Fortran Motion,  Next: Fortran Indent,  Up: Fortran
+
+Motion Commands
+---------------
+
+   Fortran mode provides special commands to move by subprograms
+(functions and subroutines) and by statements.  There is also a command
+to put the region around one subprogram, convenient for killing it or
+moving it.
+
+`C-M-a'
+     Move to beginning of subprogram
+     (`beginning-of-fortran-subprogram').
+
+`C-M-e'
+     Move to end of subprogram (`end-of-fortran-subprogram').
+
+`C-M-h'
+     Put point at beginning of subprogram and mark at end
+     (`mark-fortran-subprogram').
+
+`C-c C-n'
+     Move to beginning of current or next statement
+     (`fortran-next-statement').
+
+`C-c C-p'
+     Move to beginning of current or previous statement
+     (`fortran-previous-statement').
+
+
+File: emacs,  Node: Fortran Indent,  Next: Fortran Comments,  Prev: Fortran Motion,  Up: Fortran
+
+Fortran Indentation
+-------------------
+
+   Special commands and features are needed for indenting Fortran code
+in order to make sure various syntactic entities (line numbers, comment
+line indicators and continuation line flags) appear in the columns that
+are required for standard Fortran.
+
+* Menu:
+
+* Commands: ForIndent Commands.  Commands for indenting Fortran.
+* Contline: ForIndent Cont.      How continuation lines indent.
+* Numbers:  ForIndent Num.       How line numbers auto-indent.
+* Conv:     ForIndent Conv.      Conventions you must obey to avoid trouble.
+* Vars:     ForIndent Vars.      Variables controlling Fortran indent style.
+
+
+File: emacs,  Node: ForIndent Commands,  Next: ForIndent Cont,  Up: Fortran Indent
+
+Fortran Indentation Commands
+............................
+
+`<TAB>'
+     Indent the current line (`fortran-indent-line').
+
+`C-j'
+     Indent the current and start a new indented line
+     (`fortran-indent-new-line').
+
+`C-M-j'
+     Break the current line and set up a continuation line.
+
+`C-M-q'
+     Indent all the lines of the subprogram point is in
+     (`fortran-indent-subprogram').
+
+   Fortran mode redefines <TAB> to reindent the current line for
+Fortran (`fortran-indent-line').  This command indents Line numbers and
+continuation markers to their required columns, and independently
+indents the body of the statement based on its nesting in the program.
+
+   The key `C-j' runs the command `fortran-indent-new-line', which
+reindents the current line then makes and indents a new line.  This
+command is useful to reindent the closing statement of `do' loops and
+other blocks before starting a new line.
+
+   The key `C-M-q' runs `fortran-indent-subprogram', a command to
+reindent all the lines of the Fortran subprogram (function or
+subroutine) containing point.
+
+   The key `C-M-j' runs `fortran-split-line', which splits a line in
+the appropriate fashion for Fortran.  In a non-comment line, the second
+half becomes a continuation line and is indented accordingly.  In a
+comment line, both halves become separate comment lines.
+
+
+File: emacs,  Node: ForIndent Cont,  Next: ForIndent Num,  Prev: ForIndent Commands,  Up: Fortran Indent
+
+Continuation Lines
+..................
+
+   Most modern Fortran compilers allow two ways of writing continuation
+lines.  If the first non-space character on a line is in column 5, then
+that line is a continuation of the previous line.  We call this "fixed
+format".  (In GNU Emacs we always count columns from 0.)  The variable
+`fortran-continuation-string' specifies what character to put on column
+5.  A line that starts with a tab character followed by any digit
+except `0' is also a continuation line.  We call this style of
+continuation "tab format".
+
+   Fortran mode can make either style of continuation line, but you
+must specify which one you prefer.  The value of the variable
+`indent-tabs-mode' controls the choice: `nil' for fixed format, and
+non-`nil' for tab format.  You can tell which style is presently in
+effect by the presence or absence of the string `Tab' in the mode line.
+
+   If the text on a line starts with the conventional Fortran
+continuation marker `$', or if it begins with any non-whitespace
+character in column 5, Fortran mode treats it as a continuation line.
+When you indent a continuation line with <TAB>, it converts the line to
+the current continuation style.  When you split a Fortran statement
+with `C-M-j', the continuation marker on the newline is created
+according to the continuation style.
+
+   The setting of continuation style affects several other aspects of
+editing in Fortran mode.  In fixed format mode, the minimum column
+number for the body of a statement is 6.  Lines inside of Fortran
+blocks that are indented to larger column numbers always use only the
+space character for whitespace.  In tab format mode, the minimum column
+number for the statement body is 8, and the whitespace before column 8
+must always consist of one tab character.
+
+   When you enter Fortran mode for an existing file, it tries to deduce
+the proper continuation style automatically from the file contents.
+The first line that begins with either a tab character or six spaces
+determines the choice.  The variable `fortran-analyze-depth' specifies
+how many lines to consider (at the beginning of the file); if none of
+those lines indicates a style, then the variable
+`fortran-tab-mode-default' specifies the style.  If it is `nil', that
+specifies fixed format, and non-`nil' specifies tab format.
+
+
+File: emacs,  Node: ForIndent Num,  Next: ForIndent Conv,  Prev: ForIndent Cont,  Up: Fortran Indent
+
+Line Numbers
+............
+
+   If a number is the first non-whitespace in the line, Fortran
+indentation assumes it is a line number and moves it to columns 0
+through 4.  (Columns always count from 0 in GNU Emacs.)
+
+   Line numbers of four digits or less are normally indented one space.
+The variable `fortran-line-number-indent' controls this; it specifies
+the maximum indentation a line number can have.  Line numbers are
+indented to right-justify them to end in column 4 unless that would
+require more than this maximum indentation.  The default value of the
+variable is 1.
+
+   Simply inserting a line number is enough to indent it according to
+these rules.  As each digit is inserted, the indentation is recomputed.
+To turn off this feature, set the variable
+`fortran-electric-line-number' to `nil'.  Then inserting line numbers
+is like inserting anything else.
+
+
+File: emacs,  Node: ForIndent Conv,  Next: ForIndent Vars,  Prev: ForIndent Num,  Up: Fortran Indent
+
+Syntactic Conventions
+.....................
+
+   Fortran mode assumes that you follow certain conventions that
+simplify the task of understanding a Fortran program well enough to
+indent it properly:
+
+   * Two nested `do' loops never share a `continue' statement.
+
+   * Fortran keywords such as `if', `else', `then', `do' and others are
+     written without embedded whitespace or line breaks.
+
+     Fortran compilers generally ignore whitespace outside of string
+     constants, but Fortran mode does not recognize these keywords if
+     they are not contiguous.  Constructs such as `else if' or `end do'
+     are acceptable, but the second word should be on the same line as
+     the first and not on a continuation line.
+
+If you fail to follow these conventions, the indentation commands may
+indent some lines unaesthetically.  However, a correct Fortran program
+retains its meaning when reindented even if the conventions are not
+followed.
+
+
+File: emacs,  Node: ForIndent Vars,  Prev: ForIndent Conv,  Up: Fortran Indent
+
+Variables for Fortran Indentation
+.................................
+
+   Several additional variables control how Fortran indentation works:
+
+`fortran-do-indent'
+     Extra indentation within each level of `do' statement (default 3).
+
+`fortran-if-indent'
+     Extra indentation within each level of `if' statement (default 3).
+     This value is also used for extra indentation within each level of
+     the Fortran 90 `where' statement.
+
+`fortran-structure-indent'
+     Extra indentation within each level of `structure', `union', or
+     `map' statements (default 3).
+
+`fortran-continuation-indent'
+     Extra indentation for bodies of continuation lines (default 5).
+
+`fortran-check-all-num-for-matching-do'
+     If this is `nil', indentation assumes that each `do' statement
+     ends on a `continue' statement.  Therefore, when computing
+     indentation for a statement other than `continue', it can save time
+     by not checking for a `do' statement ending there.  If this is
+     non-`nil', indenting any numbered statement must check for a `do'
+     that ends there.  The default is `nil'.
+
+`fortran-blink-matching-if'
+     If this is `t', indenting an `endif' statement moves the cursor
+     momentarily to the matching `if' statement to show where it is.
+     The default is `nil'.
+
+`fortran-minimum-statement-indent-fixed'
+     Minimum indentation for fortran statements when using fixed format
+     continuation line style.  Statement bodies are never indented less
+     than this much.  The default is 6.
+
+`fortran-minimum-statement-indent-tab'
+     Minimum indentation for fortran statements for tab format
+     continuation line style.  Statement bodies are never indented less
+     than this much.  The default is 8.
+
+
+File: emacs,  Node: Fortran Comments,  Next: Fortran Autofill,  Prev: Fortran Indent,  Up: Fortran
+
+Fortran Comments
+----------------
+
+   The usual Emacs comment commands assume that a comment can follow a
+line of code.  In Fortran, the standard comment syntax requires an
+entire line to be just a comment.  Therefore, Fortran mode replaces the
+standard Emacs comment commands and defines some new variables.
+
+   Fortran mode can also handle a nonstandard comment syntax where
+comments start with `!' and can follow other text.  Because only some
+Fortran compilers accept this syntax, Fortran mode will not insert such
+comments unless you have said in advance to do so.  To do this, set the
+variable `comment-start' to `"!"' (*note Variables::.).
+
+`M-;'
+     Align comment or insert new comment (`fortran-comment-indent').
+
+`C-x ;'
+     Applies to nonstandard `!' comments only.
+
+`C-c ;'
+     Turn all lines of the region into comments, or (with argument)
+     turn them back into real code (`fortran-comment-region').
+
+   `M-;' in Fortran mode is redefined as the command
+`fortran-comment-indent'.  Like the usual `M-;' command, this
+recognizes any kind of existing comment and aligns its text
+appropriately; if there is no existing comment, a comment is inserted
+and aligned.  But inserting and aligning comments are not the same in
+Fortran mode as in other modes.
+
+   When a new comment must be inserted, if the current line is blank, a
+full-line comment is inserted.  On a non-blank line, a nonstandard `!'
+comment is inserted if you have said you want to use them.  Otherwise a
+full-line comment is inserted on a new line before the current line.
+
+   Nonstandard `!' comments are aligned like comments in other
+languages, but full-line comments are different.  In a standard
+full-line comment, the comment delimiter itself must always appear in
+column zero.  What can be aligned is the text within the comment.  You
+can choose from three styles of alignment by setting the variable
+`fortran-comment-indent-style' to one of these values:
+
+`fixed'
+     Align the text at a fixed column, which is the sum of
+     `fortran-comment-line-extra-indent' and the minimum statement
+     indentation.  This is the default.
+
+     The minimum statement indentation is
+     `fortran-minimum-statement-indent-fixed' for fixed format
+     continuation line style and `fortran-minimum-statement-indent-tab'
+     for tab format style.
+
+`relative'
+     Align the text as if it were a line of code, but with an additional
+     `fortran-comment-line-extra-indent' columns of indentation.
+
+`nil'
+     Don't move text in full-line columns automatically at all.
+
+   In addition, you can specify the character to be used to indent
+within full-line comments by setting the variable
+`fortran-comment-indent-char' to the single-character string you want
+to use.
+
+   Fortran mode introduces two variables `comment-line-start' and
+`comment-line-start-skip', which play for full-line comments the same
+roles played by `comment-start' and `comment-start-skip' for ordinary
+text-following comments.  Normally these are set properly by Fortran
+mode, so you do not need to change them.
+
+   The normal Emacs comment command `C-x ;' has not been redefined.  If
+you use `!' comments, this command can be used with them.  Otherwise it
+is useless in Fortran mode.
+
+   The command `C-c ;' (`fortran-comment-region') turns all the lines
+of the region into comments by inserting the string `C$$$' at the front
+of each one.  With a numeric argument, it turns the region back into
+live code by deleting `C$$$' from the front of each line in it.  The
+string used for these comments can be controlled by setting the
+variable `fortran-comment-region'.  Note that here we have an example
+of a command and a variable with the same name; these two uses of the
+name never conflict because in Lisp and in Emacs it is always clear
+from the context which one is meant.
+
+
+File: emacs,  Node: Fortran Autofill,  Next: Fortran Columns,  Prev: Fortran Comments,  Up: Fortran
+
+Fortran Auto Fill Mode
+----------------------
+
+   Fortran Auto Fill mode is a minor mode which automatically splits
+Fortran statements as you insert them when they become too wide.
+Splitting a statement involves making continuation lines using
+`fortran-continuation-string' (*Note ForIndent Cont::).  This splitting
+happens when you type <SPC>, <RET>, or <TAB>, and also in the Fortran
+indentation commands.
+
+   `M-x fortran-auto-fill-mode' turns Fortran Auto Fill mode on if it
+was off, or off if it was on.  This command works the same as `M-x
+auto-fill-mode' does for normal Auto Fill mode (*note Filling::.).  A
+positive numeric argument turns Fortran Auto Fill mode on, and a
+negative argument turns it off.  You can see when Fortran Auto Fill mode
+is in effect by the presence of the word `Fill' in the mode line,
+inside the parentheses.  Fortran Auto Fill mode is a minor mode, turned
+on or off for each buffer individually.  *Note Minor Modes::.
+
+   Fortran Auto Fill mode breaks lines at spaces or delimiters when the
+lines get longer than the desired width (the value of `fill-column').
+The delimiters that Fortran Auto Fill mode may break at are `,', `'',
+`+', `-', `/', `*', `=', and `)'.  The line break comes after the
+delimiter if the variable `fortran-break-before-delimiters' is `nil'.
+Otherwise (and by default), the break comes before the delimiter.
+
+   By default, Fortran Auto Fill mode is not enabled.  If you want this
+feature turned on permanently, add a hook function to
+`fortran-mode-hook' to execute `(fortran-auto-fill-mode 1)'.  *Note
+Hooks::.
+
